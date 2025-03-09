@@ -9,11 +9,13 @@ export class JwtService {
   constructor() { }
 
   setToken(token: string): void {
+    console.log('Setting token:', token);
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.TOKEN_KEY);
+    const token = localStorage.getItem(this.TOKEN_KEY);
+    return token;
   }
 
   removeToken(): void {
@@ -21,7 +23,12 @@ export class JwtService {
   }
 
   isTokenExpired(token: string): boolean {
-    const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
-    return (Math.floor((new Date).getTime() / 1000)) >= expiry;
+    try {
+      const expiry = (JSON.parse(atob(token.split('.')[1]))).exp;
+      return (Math.floor((new Date).getTime() / 1000)) >= expiry;
+    } catch (e) {
+      console.error('Error decoding token:', e);
+      return true;
+    }
   }
 }

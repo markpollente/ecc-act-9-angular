@@ -1,7 +1,7 @@
 import { RoleDto } from "./role.dto";
+import { BaseDto } from "./base.dto";
 
-export interface EmployeeDto {
-  id?: number;
+export interface EmployeeDto extends BaseDto {
   firstName: string;
   lastName: string;
   email: string;

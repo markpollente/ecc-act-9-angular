@@ -1,1 +1,130 @@
-<p>ticket-list works!</p>
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error">{{ error }}</div>
+
+<!-- Button to toggle form visibility -->
+<button (click)="toggleForm()">{{ showForm ? 'Cancel' : 'Create New Ticket' }}</button>
+
+<!-- Filter section -->
+<div class="filter-section" *ngIf="!showForm">
+  <h3>Search Filters</h3>
+  <div>
+    <label for="filterTicketNo">Ticket No:</label>
+    <input type="text" id="filterTicketNo" [(ngModel)]="filters.ticketNo" placeholder="Search Ticket No">
+  </div>
+  <div>
+    <label for="filterTitle">Title:</label>
+    <input type="text" id="filterTitle" [(ngModel)]="filters.title" placeholder="Search Title">
+  </div>
+  <div>
+    <label for="filterStatus">Status:</label>
+    <select id="filterStatus" [(ngModel)]="filters.status">
+      <option value="">All</option>
+      <option *ngFor="let status of ticketStatuses" [value]="status">{{ status }}</option>
+    </select>
+  </div>
+  <div>
+    <label for="filterAssignee">Assignee:</label>
+    <select id="filterAssignee" [(ngModel)]="filters.assignee">
+      <option value="">All</option>
+      <option [ngValue]="null">Unassigned</option>
+      <option *ngFor="let employee of employees" [ngValue]="employee.id">{{ employee.firstName }} {{ employee.lastName }}</option>
+    </select>
+  </div>
+  <div>
+    <label for="filterCreatedDateStart">Created Date Start:</label>
+    <input type="datetime-local" id="filterCreatedDateStart" [(ngModel)]="filters.createdDateStart" placeholder="Search Created Date Start">
+  </div>
+  <div>
+    <label for="filterCreatedDateEnd">Created Date End:</label>
+    <input type="datetime-local" id="filterCreatedDateEnd" [(ngModel)]="filters.createdDateEnd" placeholder="Search Created Date End">
+  </div>
+  <div>
+    <label for="filterUpdatedDateStart">Updated Date Start:</label>
+    <input type="datetime-local" id="filterUpdatedDateStart" [(ngModel)]="filters.updatedDateStart" placeholder="Search Updated Date Start">
+  </div>
+  <div>
+    <label for="filterUpdatedDateEnd">Updated Date End:</label>
+    <input type="datetime-local" id="filterUpdatedDateEnd" [(ngModel)]="filters.updatedDateEnd" placeholder="Search Updated Date End">
+  </div>
+  <div>
+    <label for="filterCreatedBy">Created By:</label>
+    <input type="text" id="filterCreatedBy" [(ngModel)]="filters.createdBy" placeholder="Search Created By">
+  </div>
+  <div>
+    <label for="filterUpdatedBy">Updated By:</label>
+    <input type="text" id="filterUpdatedBy" [(ngModel)]="filters.updatedBy" placeholder="Search Updated By">
+  </div>
+  <button (click)="applyFilters()">Apply</button>
+  <button (click)="clearFilters()">Clear</button>
+</div>
+
+<!-- Ticket table -->
+<table *ngIf="!loading && !error && !showForm">
+  <thead>
+    <tr>
+      <th>Ticket No</th>
+      <th>Title</th>
+      <th>Status</th>
+      <th>Assignee</th>
+      <th>Created Date</th>
+      <th>Created By</th>
+      <th>Updated Date</th>
+      <th>Updated By</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let ticket of tickets">
+      <td><a [routerLink]="['/tickets', ticket.id]">{{ ticket.ticketNo }}</a></td>
+      <td><a [routerLink]="['/tickets', ticket.id]">{{ ticket.title }}</a></td>
+      <td>{{ ticket.status }}</td>
+      <td>{{ ticket.assignee ? (ticket.assignee.firstName + ' ' + ticket.assignee.lastName) : 'Unassigned' }}</td>
+      <td>{{ ticket.createdDate }}</td>
+      <td>{{ ticket.createdBy }}</td>
+      <td>{{ ticket.updatedDate }}</td>
+      <td>{{ ticket.updatedBy }}</td>
+      <td>
+        <button (click)="editTicket(ticket)">Update</button>
+        <button *ngIf="ticket.id !== undefined" (click)="confirmDeleteTicket(ticket.id!)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Form for creating or updating tickets -->
+<div *ngIf="!loading && !error && showForm">
+  <h3>{{ isEditing ? 'Update Ticket' : 'Create New Ticket' }}</h3>
+  <form (ngSubmit)="isEditing ? updateTicket(ticketForm) : createTicket(ticketForm)" #ticketForm="ngForm">
+    <div>
+      <label for="title">Title:</label>
+      <input type="text" id="title" [(ngModel)]="newTicket.title" name="title" required>
+      <div *ngIf="ticketForm.submitted && !ticketForm.controls['title'].valid" class="error">
+        Title is required
+      </div>
+    </div>
+    <div>
+      <label for="body">Body:</label>
+      <textarea id="body" [(ngModel)]="newTicket.body" name="body" required></textarea>
+      <div *ngIf="ticketForm.submitted && !ticketForm.controls['body'].valid" class="error">
+        Body is required
+      </div>
+    </div>
+    <div>
+      <label for="status">Status:</label>
+      <select id="status" [(ngModel)]="newTicket.status" name="status" required>
+        <option *ngFor="let status of ticketStatuses" [value]="status">{{ status }}</option>
+      </select>
+      <div *ngIf="ticketForm.submitted && !ticketForm.controls['status'].valid" class="error">
+        Status is required
+      </div>
+    </div>
+    <div>
+      <label for="assignee">Assignee:</label>
+      <select id="assignee" [(ngModel)]="newTicket.assignee" name="assignee">
+        <option [ngValue]="undefined">Unassigned</option>
+        <option *ngFor="let employee of employees" [ngValue]="employee">{{ employee.firstName }} {{ employee.lastName }}</option>
+      </select>
+    </div>
+    <button type="submit">{{ isEditing ? 'Update Ticket' : 'Create Ticket' }}</button>
+  </form>
+</div>

@@ -1,1 +1,27 @@
-<p>employee-profile works!</p>
+<div class="container">
+  <h2>Profile</h2>
+  <div *ngIf="profile">
+    <p><strong>Name:</strong> {{ profile.firstName }} {{ profile.lastName }}</p>
+    <p><strong>Email:</strong> {{ profile.email }}</p>
+    <p><strong>Birthday:</strong> {{ profile.birthday }}</p>
+    <p><strong>Address:</strong> {{ profile.address }}</p>
+    <p><strong>Contact Number:</strong> {{ profile.contactNumber }}</p>
+    <p><strong>Employment Status:</strong> {{ profile.employmentStatus }}</p>
+  </div>
+
+  <h3>Filed Tickets</h3>
+  <div *ngIf="filedTickets.length === 0">No filed tickets</div>
+  <ul *ngIf="filedTickets.length > 0">
+    <li *ngFor="let ticket of filedTickets">
+      <a [routerLink]="['/tickets', ticket.id]">{{ ticket.title }}</a> - {{ ticket.status }}
+    </li>
+  </ul>
+
+  <h3>Assigned Tickets</h3>
+  <div *ngIf="assignedTickets.length === 0">No assigned tickets</div>
+  <ul *ngIf="assignedTickets.length > 0">
+    <li *ngFor="let ticket of assignedTickets">
+      <a [routerLink]="['/tickets', ticket.id]">{{ ticket.title }}</a> - {{ ticket.status }}
+    </li>
+  </ul>
+</div>

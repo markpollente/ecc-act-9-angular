@@ -21,7 +21,7 @@ export class LoginComponent {
     this.authService.login(this.email, this.password).subscribe(
       success => {
         if (success) {
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/']);
         } else {
           alert('Login failed');
         }

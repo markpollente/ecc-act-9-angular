@@ -10,7 +10,8 @@ export const JwtInterceptor: HttpInterceptorFn = (req: HttpRequest<any>, next: H
     req = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`
-      }
+      },
+      withCredentials: true
     });
   }
   return next(req);

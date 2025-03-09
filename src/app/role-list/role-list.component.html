@@ -1,1 +1,47 @@
-<p>role-list works!</p>
+<div *ngIf="loading">Loading...</div>
+<div *ngIf="error">{{ error }}</div>
+
+<!-- Button to toggle form visibility -->
+<button (click)="toggleForm()">{{ showForm ? 'Cancel' : 'Create New Role' }}</button>
+
+<!-- Role table -->
+<table *ngIf="!loading && !error && !showForm">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Description</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let role of roles">
+      <td>{{ role.id }}</td>
+      <td>{{ role.name }}</td>
+      <td>{{ role.description }}</td>
+      <td>
+        <button (click)="editRole(role)">Update</button>
+        <button *ngIf="role.id !== undefined" (click)="confirmDeleteRole(role.id!)">Delete</button>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- Form for creating or updating roles -->
+<div *ngIf="!loading && !error && showForm">
+  <h3>{{ isEditing ? 'Update Role' : 'Create New Role' }}</h3>
+  <form (ngSubmit)="isEditing ? updateRole(roleForm) : createRole(roleForm)" #roleForm="ngForm">
+    <div>
+      <label for="name">Name:</label>
+      <input type="text" id="name" [(ngModel)]="newRole.name" name="name" required>
+      <div *ngIf="roleForm.submitted && !roleForm.controls['name'].valid" class="error">
+        Name is required
+      </div>
+    </div>
+    <div>
+      <label for="description">Description:</label>
+      <input type="text" id="description" [(ngModel)]="newRole.description" name="description">
+    </div>
+    <button type="submit">{{ isEditing ? 'Update Role' : 'Create Role' }}</button>
+  </form>
+</div>

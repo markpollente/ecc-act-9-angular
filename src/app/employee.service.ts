@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../environments/environment';
 import { EmployeeDto } from '../models/employee.dto';
@@ -22,6 +22,16 @@ export class EmployeeService {
     return this.http.get<Page<EmployeeDto>>(`${this.apiUrl}?page=${page}&size=${size}`);
   }
 
+  getAllEmployeesWithFilters(filters: any): Observable<Page<EmployeeDto>> {
+    let params = new HttpParams();
+    Object.keys(filters).forEach(key => {
+      if (filters[key]) {
+        params = params.set(key, filters[key]);
+      }
+    });
+    return this.http.get<Page<EmployeeDto>>(this.apiUrl, { params });
+  }
+
   getEmployeeById(id: number): Observable<EmployeeDto> {
     return this.http.get<EmployeeDto>(`${this.apiUrl}/${id}`);
   }
@@ -35,7 +45,7 @@ export class EmployeeService {
   }
 
   deleteEmployee(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+    return this.http.delete<void>(`${this.apiUrl}/${id}`, { responseType: 'text' as 'json' });
   }
 
   assignRoleToEmployee(employeeId: number, roleId: number): Observable<EmployeeDto> {
