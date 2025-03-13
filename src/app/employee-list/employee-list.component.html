@@ -1,182 +1,232 @@
-<div *ngIf="loading">Loading...</div>
-<div *ngIf="error">{{ error }}</div>
+<div class="container">
+  <div *ngIf="loading">Loading...</div>
+  <div *ngIf="error">{{ error }}</div>
 
-<!-- Button to toggle form visibility -->
-<button (click)="toggleForm()">{{ showForm ? 'Cancel' : 'Create New Employee' }}</button>
+  <!-- Button to toggle form visibility -->
+  <button class="btn btn-primary mb-3 me-3" (click)="toggleForm()">{{ showForm ? 'Cancel' : 'Create New Employee'
+    }}</button>
 
-<!-- Filter section -->
-<div class="filter-section" *ngIf="!showForm">
-  <h3>Search Filters</h3>
-  <div>
-    <label for="filterId">ID:</label>
-    <input type="text" id="filterId" [(ngModel)]="filters.id" placeholder="Search ID">
-  </div>
-  <div>
-    <label for="filterFirstName">First Name:</label>
-    <input type="text" id="filterFirstName" [(ngModel)]="filters.firstName" placeholder="Search First Name">
-  </div>
-  <div>
-    <label for="filterLastName">Last Name:</label>
-    <input type="text" id="filterLastName" [(ngModel)]="filters.lastName" placeholder="Search Last Name">
-  </div>
-  <div>
-    <label for="filterEmail">Email:</label>
-    <input type="text" id="filterEmail" [(ngModel)]="filters.email" placeholder="Search Email">
-  </div>
-  <div>
-    <label for="filterBirthday">Birthday:</label>
-    <input type="date" id="filterBirthday" [(ngModel)]="filters.birthday" placeholder="Search Birthday">
-  </div>
-  <div>
-    <label for="filterAge">Age:</label>
-    <input type="text" id="filterAge" [(ngModel)]="filters.age" placeholder="Search Age">
-  </div>
-  <div>
-    <label for="filterAddress">Address:</label>
-    <input type="text" id="filterAddress" [(ngModel)]="filters.address" placeholder="Search Address">
-  </div>
-  <div>
-    <label for="filterContactNumber">Contact Number:</label>
-    <input type="text" id="filterContactNumber" [(ngModel)]="filters.contactNumber" placeholder="Search Contact Number">
-  </div>
-  <div>
-    <label for="filterEmploymentStatus">Employment Status:</label>
-    <input type="text" id="filterEmploymentStatus" [(ngModel)]="filters.employmentStatus" placeholder="Search Employment Status">
-  </div>
-  <div>
-    <label for="filterRoles">Roles:</label>
-    <select id="filterRoles" [(ngModel)]="filters.roles">
-      <option value="">All Roles</option>
-      <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
-    </select>
-  </div>
-  <div>
-    <label for="filterCreatedDateStart">Created Date Start:</label>
-    <input type="datetime-local" id="filterCreatedDateStart" [(ngModel)]="filters.createdDateStart" placeholder="Search Created Date Start">
-  </div>
-  <div>
-    <label for="filterCreatedDateEnd">Created Date End:</label>
-    <input type="datetime-local" id="filterCreatedDateEnd" [(ngModel)]="filters.createdDateEnd" placeholder="Search Created Date End">
-  </div>
-  <div>
-    <label for="filterUpdatedDateStart">Updated Date Start:</label>
-    <input type="datetime-local" id="filterUpdatedDateStart" [(ngModel)]="filters.updatedDateStart" placeholder="Search Updated Date Start">
-  </div>
-  <div>
-    <label for="filterUpdatedDateEnd">Updated Date End:</label>
-    <input type="datetime-local" id="filterUpdatedDateEnd" [(ngModel)]="filters.updatedDateEnd" placeholder="Search Updated Date End">
-  </div>
-  <div>
-    <label for="filterCreatedBy">Created By:</label>
-    <input type="text" id="filterCreatedBy" [(ngModel)]="filters.createdBy" placeholder="Search Created By">
-  </div>
-  <div>
-    <label for="filterUpdatedBy">Updated By:</label>
-    <input type="text" id="filterUpdatedBy" [(ngModel)]="filters.updatedBy" placeholder="Search Updated By">
-  </div>
-  <button (click)="applyFilters()">Apply</button>
-  <button (click)="clearFilters()">Clear</button>
-</div>
+  <!-- Button to toggle search filters -->
+  <button class="btn btn-secondary mb-3" type="button" data-bs-toggle="collapse" data-bs-target="#searchFilters"
+    aria-expanded="false" aria-controls="searchFilters">
+    Toggle Search Filters
+  </button>
 
-<!-- Employee table -->
-<table *ngIf="!loading && !error && !showForm">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>First Name</th>
-      <th>Last Name</th>
-      <th>Email</th>
-      <th>Birthday</th>
-      <th>Age</th>
-      <th>Address</th>
-      <th>Contact Number</th>
-      <th>Employment Status</th>
-      <th>Roles</th>
-      <th>Created Date</th>
-      <th>Created By</th>
-      <th>Updated Date</th>
-      <th>Updated By</th>
-      <th>Actions</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let employee of employees">
-      <td>{{ employee.id }}</td>
-      <td>{{ employee.firstName }}</td>
-      <td>{{ employee.lastName }}</td>
-      <td>{{ employee.email }}</td>
-      <td>{{ employee.birthday }}</td>
-      <td>{{ employee.age }}</td>
-      <td>{{ employee.address }}</td>
-      <td>{{ employee.contactNumber }}</td>
-      <td>{{ employee.employmentStatus }}</td>
-      <td>{{ getRoles(employee) }}</td>
-      <td>{{ employee.createdDate }}</td>
-      <td>{{ employee.createdBy}}</td>
-      <td>{{ employee.updatedDate }}</td>
-      <td>{{ employee.updatedBy }}</td>
-      <td>
-        <button (click)="editEmployee(employee)">Update</button>
-        <button *ngIf="employee.id !== undefined" (click)="confirmDeleteEmployee(employee.id!)">Delete</button>
-      </td>
-    </tr>
-  </tbody>
-</table>
+  <!-- Filter section -->
+  <div class="collapse" id="searchFilters">
+    <div class="card card-body">
+      <h3>Search Filters</h3>
+      <form class="row g-3">
+        <div class="col-md-6">
+          <label for="filterFirstName" class="form-label">First Name:</label>
+          <input class="form-control" type="text" id="filterFirstName" name="filterFirstName"
+            [(ngModel)]="filters.firstName" placeholder="Search First Name">
+        </div>
+        <div class="col-md-6">
+          <label for="filterLastName" class="form-label">Last Name:</label>
+          <input class="form-control" type="text" id="filterLastName" name="filterLastName"
+            [(ngModel)]="filters.lastName" placeholder="Search Last Name">
+        </div>
+        <div class="col-md-6">
+          <label for="filterEmail" class="form-label">Email:</label>
+          <input class="form-control" type="text" id="filterEmail" name="filterEmail" [(ngModel)]="filters.email"
+            placeholder="Search Email">
+        </div>
+        <div class="col-md-6">
+          <label for="filterBirthday" class="form-label">Birthday:</label>
+          <input class="form-control" type="date" id="filterBirthday" name="filterBirthday"
+            [(ngModel)]="filters.birthday" placeholder="Search Birthday">
+        </div>
+        <div class="col-md-6">
+          <label for="filterAge" class="form-label">Age:</label>
+          <input class="form-control" type="text" id="filterAge" name="filterAge" [(ngModel)]="filters.age"
+            placeholder="Search Age">
+        </div>
+        <div class="col-md-6">
+          <label for="filterAddress" class="form-label">Address:</label>
+          <input class="form-control" type="text" id="filterAddress" name="filterAddress" [(ngModel)]="filters.address"
+            placeholder="Search Address">
+        </div>
+        <div class="col-md-6">
+          <label for="filterContactNumber" class="form-label">Contact Number:</label>
+          <input class="form-control" type="text" id="filterContactNumber" name="filterContactNumber"
+            [(ngModel)]="filters.contactNumber" placeholder="Search Contact Number">
+        </div>
+        <div class="col-md-6">
+          <label for="filterEmploymentStatus" class="form-label">Employment Status:</label>
+          <input class="form-control" type="text" id="filterEmploymentStatus" name="filterEmploymentStatus"
+            [(ngModel)]="filters.employmentStatus" placeholder="Search Employment Status">
+        </div>
+        <div class="col-md-6">
+          <label for="filterRoles" class="form-label">Roles:</label>
+          <select class="form-select" id="filterRoles" name="filterRoles" [(ngModel)]="filters.roles">
+            <option value="">All Roles</option>
+            <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+          </select>
+        </div>
+        <div class="col-md-6">
+          <label for="filterCreatedDateStart" class="form-label">Created Date Start:</label>
+          <input class="form-control" type="datetime-local" id="filterCreatedDateStart" name="filterCreatedDateStart"
+            [(ngModel)]="filters.createdDateStart" placeholder="Search Created Date Start">
+        </div>
+        <div class="col-md-6">
+          <label for="filterCreatedDateEnd" class="form-label">Created Date End:</label>
+          <input class="form-control" type="datetime-local" id="filterCreatedDateEnd" name="filterCreatedDateEnd"
+            [(ngModel)]="filters.createdDateEnd" placeholder="Search Created Date End">
+        </div>
+        <div class="col-md-6">
+          <label for="filterUpdatedDateStart" class="form-label">Updated Date Start:</label>
+          <input class="form-control" type="datetime-local" id="filterUpdatedDateStart" name="filterUpdatedDateStart"
+            [(ngModel)]="filters.updatedDateStart" placeholder="Search Updated Date Start">
+        </div>
+        <div class="col-md-6">
+          <label for="filterUpdatedDateEnd" class="form-label">Updated Date End:</label>
+          <input class="form-control" type="datetime-local" id="filterUpdatedDateEnd" name="filterUpdatedDateEnd"
+            [(ngModel)]="filters.updatedDateEnd" placeholder="Search Updated Date End">
+        </div>
+        <div class="col-md-6">
+          <label for="filterCreatedBy" class="form-label">Created By:</label>
+          <input class="form-control" type="text" id="filterCreatedBy" name="filterCreatedBy"
+            [(ngModel)]="filters.createdBy" placeholder="Search Created By">
+        </div>
+        <div class="col-md-6">
+          <label for="filterUpdatedBy" class="form-label">Updated By:</label>
+          <input class="form-control" type="text" id="filterUpdatedBy" name="filterUpdatedBy"
+            [(ngModel)]="filters.updatedBy" placeholder="Search Updated By">
+        </div>
+        <div class="col-12">
+          <button class="btn btn-primary" (click)="applyFilters()">Apply</button>
+          <button class="btn btn-secondary" (click)="clearFilters()">Clear</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-<!-- Form for creating or updating employees -->
-<div *ngIf="!loading && !error && showForm">
-  <h3>{{ isEditing ? 'Update Employee' : 'Create New Employee' }}</h3>
-  <form (ngSubmit)="isEditing ? updateEmployee(employeeForm) : createEmployee(employeeForm)" #employeeForm="ngForm">
-    <div>
-      <label for="firstName">First Name:</label>
-      <input type="text" id="firstName" [(ngModel)]="newEmployee.firstName" name="firstName" required>
-      <div *ngIf="employeeForm.submitted && !employeeForm.controls['firstName'].valid" class="error">
-        First name is required
+  <!-- Employee table -->
+  <div class="table-responsive">
+    <table class="table table-striped" *ngIf="!loading && !error && !showForm">
+      <thead>
+        <tr>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Birthday</th>
+          <th>Age</th>
+          <th>Address</th>
+          <th>Contact Number</th>
+          <th>Employment Status</th>
+          <th>Roles</th>
+          <th>Created Date</th>
+          <th>Created By</th>
+          <th>Updated Date</th>
+          <th>Updated By</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let employee of employees">
+          <td>{{ employee.firstName }}</td>
+          <td>{{ employee.lastName }}</td>
+          <td>{{ employee.email }}</td>
+          <td>{{ employee.birthday }}</td>
+          <td>{{ employee.age }}</td>
+          <td>{{ employee.address }}</td>
+          <td>{{ employee.contactNumber }}</td>
+          <td>{{ employee.employmentStatus }}</td>
+          <td>{{ getRoles(employee) }}</td>
+          <td>{{ employee.createdDate }}</td>
+          <td>{{ employee.createdBy}}</td>
+          <td>{{ employee.updatedDate }}</td>
+          <td>{{ employee.updatedBy }}</td>
+          <td>
+            <button class="btn btn-warning btn-sm" (click)="editEmployee(employee)">Update</button>
+            <button class="btn btn-danger btn-sm" *ngIf="employee.id !== undefined"
+              (click)="confirmDeleteEmployee(employee.id!)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Form for creating or updating employees -->
+  <div *ngIf="!loading && !error && showForm">
+    <h3>{{ isEditing ? 'Update Employee' : 'Create New Employee' }}</h3>
+    <form (ngSubmit)="isEditing ? updateEmployee(employeeForm) : createEmployee(employeeForm)" #employeeForm="ngForm">
+      <div class="row mb-3">
+        <label for="firstName" class="col-sm-2 col-form-label">First Name:</label>
+        <div class="col-sm-10">
+          <input type="text" id="firstName" name="firstName" [(ngModel)]="newEmployee.firstName" class="form-control"
+            required>
+        </div>
+        <div *ngIf="employeeForm.submitted && !employeeForm.controls['firstName'].valid" class="error">
+          First name is required
+        </div>
       </div>
-    </div>
-    <div>
-      <label for="lastName">Last Name:</label>
-      <input type="text" id="lastName" [(ngModel)]="newEmployee.lastName" name="lastName" required>
-      <div *ngIf="employeeForm.submitted && !employeeForm.controls['lastName'].valid" class="error">
-        Last name is required
+      <div class="row mb-3">
+        <label for="lastName" class="col-sm-2 col-form-label">Last Name:</label>
+        <div class="col-sm-10">
+          <input type="text" id="lastName" name="lastName" [(ngModel)]="newEmployee.lastName" class="form-control"
+            required>
+        </div>
+        <div *ngIf="employeeForm.submitted && !employeeForm.controls['lastName'].valid" class="error">
+          Last name is required
+        </div>
       </div>
-    </div>
-    <div>
-      <label for="email">Email:</label>
-      <input type="email" id="email" [(ngModel)]="newEmployee.email" name="email" required email>
-      <div *ngIf="employeeForm.submitted && !employeeForm.controls['email'].valid" class="error">
-        Valid email is required
+      <div class="row mb-3">
+        <label for="email" class="col-sm-2 col-form-label">Email:</label>
+        <div class="col-sm-10">
+          <input type="email" id="email" name="email" [(ngModel)]="newEmployee.email" class="form-control" required
+            email>
+        </div>
+        <div *ngIf="employeeForm.submitted && !employeeForm.controls['email'].valid" class="error">
+          Valid email is required
+        </div>
       </div>
-    </div>
-    <div>
-      <label for="password">Password:</label>
-      <input type="password" id="password" [(ngModel)]="newEmployee.password" name="password" required>
-      <div *ngIf="employeeForm.submitted && !employeeForm.controls['password'].valid" class="error">
-        Password is required
+      <div class="row mb-3">
+        <label for="password" class="col-sm-2 col-form-label">Password:</label>
+        <div class="col-sm-10">
+          <input type="password" id="password" name="password" [(ngModel)]="newEmployee.password" class="form-control"
+            required>
+        </div>
+        <div *ngIf="employeeForm.submitted && !employeeForm.controls['password'].valid" class="error">
+          Password is required
+        </div>
       </div>
-    </div>
-    <div>
-      <label for="birthday">Birthday:</label>
-      <input type="date" id="birthday" [(ngModel)]="newEmployee.birthday" name="birthday">
-    </div>
-    <div>
-      <label for="address">Address:</label>
-      <input type="text" id="address" [(ngModel)]="newEmployee.address" name="address">
-    </div>
-    <div>
-      <label for="contactNumber">Contact Number:</label>
-      <input type="text" id="contactNumber" [(ngModel)]="newEmployee.contactNumber" name="contactNumber">
-    </div>
-    <div>
-      <label for="employmentStatus">Employment Status:</label>
-      <input type="text" id="employmentStatus" [(ngModel)]="newEmployee.employmentStatus" name="employmentStatus">
-    </div>
-    <div>
-      <label for="roles">Roles:</label>
-      <select id="roles" [(ngModel)]="selectedRoleId" name="roles">
-        <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
-      </select>
-    </div>
-    <button type="submit">{{ isEditing ? 'Update Employee' : 'Create Employee' }}</button>
-  </form>
+      <div class="row mb-3">
+        <label for="birthday" class="col-sm-2 col-form-label">Birthday:</label>
+        <div class="col-sm-10">
+          <input type="date" id="birthday" name="birthday" [(ngModel)]="newEmployee.birthday" class="form-control">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="address" class="col-sm-2 col-form-label">Address:</label>
+        <div class="col-sm-10">
+          <input type="text" id="address" name="address" [(ngModel)]="newEmployee.address" class="form-control">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="contactNumber" class="col-sm-2 col-form-label">Contact Number:</label>
+        <div class="col-sm-10">
+          <input type="text" id="contactNumber" name="contactNumber" [(ngModel)]="newEmployee.contactNumber"
+            class="form-control">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="employmentStatus" class="col-sm-2 col-form-label">Employment Status:</label>
+        <div class="col-sm-10">
+          <input type="text" id="employmentStatus" name="employmentStatus" [(ngModel)]="newEmployee.employmentStatus"
+            class="form-control">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="roles" class="col-sm-2 col-form-label">Roles:</label>
+        <div class="col-sm-10">
+          <select id="roles" name="roles" [(ngModel)]="selectedRoleId" class="form-select">
+            <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+          </select>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary">{{ isEditing ? 'Update Employee' : 'Create Employee' }}</button>
+    </form>
+  </div>
 </div>
