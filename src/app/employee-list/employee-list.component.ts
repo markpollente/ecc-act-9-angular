@@ -7,10 +7,11 @@ import { Router } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RoleService } from '../role.service';
 import { RoleDto } from '../../models/role.dto';
+import { EmployeeModalComponent } from '../employee-modal/employee-modal.component';
 
 @Component({
   selector: 'app-employee-list',
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EmployeeModalComponent],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss']
 })
@@ -33,7 +34,6 @@ export class EmployeeListComponent implements OnInit {
     createdBy: '',
     updatedBy: ''
   };
-  showForm = false;
   isEditing = false;
   editingEmployeeId: number | null | undefined = null;
   selectedRoleId: number | null = null;
@@ -56,12 +56,18 @@ export class EmployeeListComponent implements OnInit {
     updatedBy: ''
   };
 
+  // Pagination properties
+  currentPage = 1;
+  totalPages = 1;
+  pageSize = 3;
+  pages: number[] = [];
+
   constructor(
     private employeeService: EmployeeService,
     private authService: AuthService,
     private router: Router,
     private roleService: RoleService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     if (!this.authService.isAdmin()) {
@@ -83,9 +89,11 @@ export class EmployeeListComponent implements OnInit {
 
   loadEmployees(): void {
     this.loading = true;
-    this.employeeService.getAllEmployeesWithFilters(this.filters).subscribe({
+    this.employeeService.getAllEmployeesWithFilters({ ...this.filters, page: this.currentPage - 1, size: this.pageSize}).subscribe({
       next: (data) => {
         this.employees = data.content;
+        this.totalPages = data.totalPages;
+        this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
         this.loading = false;
       },
       error: (err) => {
@@ -118,12 +126,12 @@ export class EmployeeListComponent implements OnInit {
       createdBy: '',
       updatedBy: ''
     };
-  
+
     const createdDateStartInput = document.getElementById('filterCreatedDateStart') as HTMLInputElement;
     const createdDateEndInput = document.getElementById('filterCreatedDateEnd') as HTMLInputElement;
     const updatedDateStartInput = document.getElementById('filterUpdatedDateStart') as HTMLInputElement;
     const updatedDateEndInput = document.getElementById('filterUpdatedDateEnd') as HTMLInputElement;
-  
+
     if (createdDateStartInput) createdDateStartInput.value = '';
     if (createdDateEndInput) createdDateEndInput.value = '';
     if (updatedDateStartInput) updatedDateStartInput.value = '';
@@ -156,7 +164,6 @@ export class EmployeeListComponent implements OnInit {
           createdBy: '',
           updatedBy: ''
         };
-        this.showForm = false; // Hide form after creating employee
       },
       error: (err) => {
         this.error = 'Failed to create employee';
@@ -168,7 +175,6 @@ export class EmployeeListComponent implements OnInit {
     this.newEmployee = { ...employee };
     this.isEditing = true;
     this.editingEmployeeId = employee.id;
-    this.showForm = true;
   }
 
   updateEmployee(form: NgForm): void {
@@ -201,7 +207,6 @@ export class EmployeeListComponent implements OnInit {
           };
           this.isEditing = false;
           this.editingEmployeeId = null;
-          this.showForm = false;
         },
         error: (err) => {
           this.error = 'Failed to update employee';
@@ -244,26 +249,10 @@ export class EmployeeListComponent implements OnInit {
     }
   }
 
-  toggleForm(): void {
-    this.showForm = !this.showForm;
-    if (!this.showForm) {
-      this.isEditing = false;
-      this.editingEmployeeId = null;
-      this.newEmployee = {
-        firstName: '',
-        lastName: '',
-        email: '',
-        password: '',
-        birthday: '',
-        address: '',
-        contactNumber: '',
-        employmentStatus: '',
-        createdDate: '',
-        updatedDate: '',
-        createdBy: '',
-        updatedBy: ''
-      };
-      this.selectedRoleId = null;
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadEmployees();
     }
   }
 }

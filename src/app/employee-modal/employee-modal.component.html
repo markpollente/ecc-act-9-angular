@@ -1,0 +1,83 @@
+<div class="modal fade" id="employeeModal" tabindex="-1" aria-labelledby="employeeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="employeeModalLabel">{{ isEditing ? 'Update Employee' : 'Create New Employee' }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="onSave(employeeForm)" #employeeForm="ngForm">
+          <div class="row mb-3">
+            <label for="firstName" class="col-sm-2 col-form-label">First Name:</label>
+            <div class="col-sm-10">
+              <input type="text" id="firstName" name="firstName" [(ngModel)]="newEmployee.firstName" class="form-control" required>
+            </div>
+            <div *ngIf="employeeForm.submitted && !employeeForm.controls['firstName'].valid" class="error">
+              First name is required
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="lastName" class="col-sm-2 col-form-label">Last Name:</label>
+            <div class="col-sm-10">
+              <input type="text" id="lastName" name="lastName" [(ngModel)]="newEmployee.lastName" class="form-control" required>
+            </div>
+            <div *ngIf="employeeForm.submitted && !employeeForm.controls['lastName'].valid" class="error">
+              Last name is required
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="email" class="col-sm-2 col-form-label">Email:</label>
+            <div class="col-sm-10">
+              <input type="email" id="email" name="email" [(ngModel)]="newEmployee.email" class="form-control" required email>
+            </div>
+            <div *ngIf="employeeForm.submitted && !employeeForm.controls['email'].valid" class="error">
+              Valid email is required
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="password" class="col-sm-2 col-form-label">Password:</label>
+            <div class="col-sm-10">
+              <input type="password" id="password" name="password" [(ngModel)]="newEmployee.password" class="form-control" required>
+            </div>
+            <div *ngIf="employeeForm.submitted && !employeeForm.controls['password'].valid" class="error">
+              Password is required
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="birthday" class="col-sm-2 col-form-label">Birthday:</label>
+            <div class="col-sm-10">
+              <input type="date" id="birthday" name="birthday" [(ngModel)]="newEmployee.birthday" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="address" class="col-sm-2 col-form-label">Address:</label>
+            <div class="col-sm-10">
+              <input type="text" id="address" name="address" [(ngModel)]="newEmployee.address" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="contactNumber" class="col-sm-2 col-form-label">Contact Number:</label>
+            <div class="col-sm-10">
+              <input type="text" id="contactNumber" name="contactNumber" [(ngModel)]="newEmployee.contactNumber" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="employmentStatus" class="col-sm-2 col-form-label">Employment Status:</label>
+            <div class="col-sm-10">
+              <input type="text" id="employmentStatus" name="employmentStatus" [(ngModel)]="newEmployee.employmentStatus" class="form-control">
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="roles" class="col-sm-2 col-form-label">Roles:</label>
+            <div class="col-sm-10">
+              <select id="roles" name="roles" [(ngModel)]="selectedRoleId" class="form-select">
+                <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary">{{ isEditing ? 'Update Employee' : 'Create Employee' }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
