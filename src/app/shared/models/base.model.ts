@@ -1,4 +1,4 @@
-export interface BaseDto {
+export interface BaseModel {
   id?: number;
   createdDate?: string;
   updatedDate?: string;

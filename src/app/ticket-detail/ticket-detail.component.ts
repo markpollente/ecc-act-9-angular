@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { HelpdeskTicketService } from '../ticket.service';
-import { HelpdeskTicketDto } from '../../models/helpdesk-ticket.dto';
 import { CommonModule } from '@angular/common';
+
+import { TicketService } from '@services/ticket.service';
+
+import { Ticket } from '@models/ticket.model';
 
 @Component({
   selector: 'app-ticket-detail',
@@ -12,13 +14,13 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./ticket-detail.component.scss']
 })
 export class TicketDetailComponent implements OnInit {
-  ticket: HelpdeskTicketDto | null = null;
+  ticket: Ticket | null = null;
   loading = true;
   error: string | null = null;
 
   constructor(
     private route: ActivatedRoute,
-    private ticketService: HelpdeskTicketService
+    private ticketService: TicketService
   ) {}
 
   ngOnInit(): void {

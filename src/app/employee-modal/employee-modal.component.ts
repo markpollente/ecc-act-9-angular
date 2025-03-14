@@ -1,7 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
-import { EmployeeDto } from '../../models/employee.dto';
-import { RoleDto } from '../../models/role.dto';
+
+import { Employee } from '@models/employee.model';
+import { Role } from '@models/role.model';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -12,7 +13,7 @@ import { CommonModule } from '@angular/common';
 })
 export class EmployeeModalComponent {
   @Input() isEditing: boolean = false;
-  @Input() newEmployee: EmployeeDto = {
+  @Input() newEmployee: Employee = {
     firstName: '',
     lastName: '',
     email: '',
@@ -26,7 +27,7 @@ export class EmployeeModalComponent {
     createdBy: '',
     updatedBy: ''
   };
-  @Input() roles: RoleDto[] = [];
+  @Input() roles: Role[] = [];
   @Input() selectedRoleId: number | null = null;
   @Output() saveEmployee = new EventEmitter<NgForm>();
 

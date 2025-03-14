@@ -1,7 +1,7 @@
-import { RoleDto } from "./role.dto";
-import { BaseDto } from "./base.dto";
+import { Role } from "./role.model";
+import { BaseModel } from "./base.model";
 
-export interface EmployeeDto extends BaseDto {
+export interface Employee extends BaseModel {
   firstName: string;
   lastName: string;
   email: string;
@@ -11,5 +11,5 @@ export interface EmployeeDto extends BaseDto {
   contactNumber?: string;
   employmentStatus?: string;
   password?: string;
-  roles?: RoleDto[];
+  roles?: Role[];
 }

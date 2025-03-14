@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { EmployeeService } from '../employee.service';
 import { CommonModule } from '@angular/common';
-import { HelpdeskTicketDto } from '../../models/helpdesk-ticket.dto';
 import { RouterModule } from '@angular/router';
+
+import { EmployeeService } from '@services/employee.service';
+
+import { Ticket } from '@models/ticket.model';
 
 @Component({
   selector: 'app-employee-profile',
@@ -13,8 +15,8 @@ import { RouterModule } from '@angular/router';
 })
 export class EmployeeProfileComponent implements OnInit {
   profile: any;
-  filedTickets: HelpdeskTicketDto[] = [];
-  assignedTickets: HelpdeskTicketDto[] = [];
+  filedTickets: Ticket[] = [];
+  assignedTickets: Ticket[] = [];
 
   constructor(private employeeService: EmployeeService) { }
 

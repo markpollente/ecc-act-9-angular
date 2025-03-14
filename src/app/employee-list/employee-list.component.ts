@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { EmployeeDto } from '../../models/employee.dto';
-import { EmployeeService } from '../employee.service';
-import { AuthService } from '../auth.service';
 import { Router } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
-import { RoleService } from '../role.service';
-import { RoleDto } from '../../models/role.dto';
+
+import { AuthService } from '@services/auth.service';
+import { EmployeeService } from '@services/employee.service';
+import { RoleService } from '@services/role.service';
+
+import { Employee } from '@models/employee.model';
+import { Role } from '@models/role.model';
 import { EmployeeModalComponent } from '../employee-modal/employee-modal.component';
 
 @Component({
@@ -16,11 +18,11 @@ import { EmployeeModalComponent } from '../employee-modal/employee-modal.compone
   styleUrls: ['./employee-list.component.scss']
 })
 export class EmployeeListComponent implements OnInit {
-  employees: EmployeeDto[] = [];
-  roles: RoleDto[] = [];
+  employees: Employee[] = [];
+  roles: Role[] = [];
   loading = true;
   error: string | null = null;
-  newEmployee: EmployeeDto = {
+  newEmployee: Employee = {
     firstName: '',
     lastName: '',
     email: '',
@@ -138,7 +140,7 @@ export class EmployeeListComponent implements OnInit {
     if (updatedDateEndInput) updatedDateEndInput.value = '';
   }
 
-  getRoles(employee: EmployeeDto): string {
+  getRoles(employee: Employee): string {
     return employee.roles ? employee.roles.map(role => role.name).join(', ') : '';
   }
 
@@ -171,7 +173,7 @@ export class EmployeeListComponent implements OnInit {
     });
   }
 
-  editEmployee(employee: EmployeeDto): void {
+  editEmployee(employee: Employee): void {
     this.newEmployee = { ...employee };
     this.isEditing = true;
     this.editingEmployeeId = employee.id;

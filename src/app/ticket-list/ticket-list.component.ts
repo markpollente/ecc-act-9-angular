@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { HelpdeskTicketService } from '../ticket.service';
-import { HelpdeskTicketDto } from '../../models/helpdesk-ticket.dto';
-import { EmployeeService } from '../employee.service';
-import { EmployeeDto } from '../../models/employee.dto';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
+
+import { Ticket } from '@models/ticket.model';
+import { Employee } from '@models/employee.model';
+
+import { TicketService } from '@services/ticket.service';
+import { EmployeeService } from '@services/employee.service';
 
 @Component({
   selector: 'app-ticket-list',
@@ -15,8 +17,8 @@ import { FormsModule, NgForm } from '@angular/forms';
   styleUrls: ['./ticket-list.component.scss']
 })
 export class TicketListComponent implements OnInit {
-  tickets: HelpdeskTicketDto[] = [];
-  employees: EmployeeDto[] = [];
+  tickets: Ticket[] = [];
+  employees: Employee[] = [];
   ticketStatuses: string[] = ['FILED', 'DRAFT', 'INPROGRESS', 'DUPLICATE', 'CLOSED'];
   filters: {
     ticketNo: string;
@@ -30,18 +32,18 @@ export class TicketListComponent implements OnInit {
     createdBy?: string;
     updatedBy?: string;
   } = {
-    ticketNo: '',
-    title: '',
-    status: '',
-    assignee: '',
-    createdDateStart: '',
-    createdDateEnd: '',
-    updatedDateStart: '',
-    updatedDateEnd: '',
-    createdBy: '',
-    updatedBy: ''
-  };
-  newTicket: HelpdeskTicketDto = {
+      ticketNo: '',
+      title: '',
+      status: '',
+      assignee: '',
+      createdDateStart: '',
+      createdDateEnd: '',
+      updatedDateStart: '',
+      updatedDateEnd: '',
+      createdBy: '',
+      updatedBy: ''
+    };
+  newTicket: Ticket = {
     ticketNo: '',
     title: '',
     body: '',
@@ -55,9 +57,9 @@ export class TicketListComponent implements OnInit {
   error: string | null = null;
 
   constructor(
-    private ticketService: HelpdeskTicketService,
+    private ticketService: TicketService,
     private employeeService: EmployeeService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadTickets();
@@ -106,12 +108,12 @@ export class TicketListComponent implements OnInit {
       createdBy: '',
       updatedBy: ''
     };
-  
+
     const createdDateStartInput = document.getElementById('filterCreatedDateStart') as HTMLInputElement;
     const createdDateEndInput = document.getElementById('filterCreatedDateEnd') as HTMLInputElement;
     const updatedDateStartInput = document.getElementById('filterUpdatedDateStart') as HTMLInputElement;
     const updatedDateEndInput = document.getElementById('filterUpdatedDateEnd') as HTMLInputElement;
-  
+
     if (createdDateStartInput) createdDateStartInput.value = '';
     if (createdDateEndInput) createdDateEndInput.value = '';
     if (updatedDateStartInput) updatedDateStartInput.value = '';
@@ -140,7 +142,7 @@ export class TicketListComponent implements OnInit {
     });
   }
 
-  editTicket(ticket: HelpdeskTicketDto): void {
+  editTicket(ticket: Ticket): void {
     this.newTicket = { ...ticket };
     this.isEditing = true;
     this.editingTicketId = ticket.id;

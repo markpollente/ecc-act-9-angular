@@ -1,8 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { RoleService } from '../role.service';
-import { RoleDto } from '../../models/role.dto';
 import { CommonModule } from '@angular/common';
 import { FormsModule, NgForm } from '@angular/forms';
+
+import { RoleService } from '@services/role.service';
+
+import { Role } from '@models/role.model';
 
 @Component({
   selector: 'app-role-list',
@@ -12,13 +14,13 @@ import { FormsModule, NgForm } from '@angular/forms';
   styleUrls: ['./role-list.component.scss']
 })
 export class RoleListComponent implements OnInit {
-  roles: RoleDto[] = [];
+  roles: Role[] = [];
   loading = true;
   error: string | null = null;
   showForm = false;
   isEditing = false;
   editingRoleId: number | null | undefined = null;
-  newRole: RoleDto = {
+  newRole: Role = {
     name: '',
     description: ''
   };
@@ -74,7 +76,7 @@ export class RoleListComponent implements OnInit {
     });
   }
 
-  editRole(role: RoleDto): void {
+  editRole(role: Role): void {
     this.newRole = { ...role };
     this.isEditing = true;
     this.editingRoleId = role.id;

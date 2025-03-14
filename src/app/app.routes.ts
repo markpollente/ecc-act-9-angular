@@ -6,7 +6,7 @@ import { TicketListComponent } from './ticket-list/ticket-list.component';
 import { TicketDetailComponent } from './ticket-detail/ticket-detail.component';
 import { RoleListComponent } from './role-list/role-list.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { AuthGuard } from './guards/auth.guard';
+import { AuthGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   { path: '', component: DashboardComponent, canActivate: [AuthGuard] },
