@@ -8,11 +8,12 @@ import { Employee } from '@models/employee.model';
 
 import { TicketService } from '@services/ticket.service';
 import { EmployeeService } from '@services/employee.service';
+import { TicketModalComponent } from 'app/ticket-modal/ticket-modal.component';
 
 @Component({
   selector: 'app-ticket-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule, TicketModalComponent],
   templateUrl: './ticket-list.component.html',
   styleUrls: ['./ticket-list.component.scss']
 })
@@ -50,11 +51,17 @@ export class TicketListComponent implements OnInit {
     status: '',
     assignee: undefined
   };
-  showForm = false;
   isEditing = false;
   editingTicketId: number | null | undefined = null;
+  selectedEmployeeId: number | null = null;
   loading = true;
   error: string | null = null;
+
+  // Pagination properties
+  currentPage = 1;
+  totalPages = 1;
+  pageSize = 3;
+  pages: number[] = [];
 
   constructor(
     private ticketService: TicketService,
@@ -68,9 +75,11 @@ export class TicketListComponent implements OnInit {
 
   loadTickets(): void {
     this.loading = true;
-    this.ticketService.getAllTicketsWithFilters(this.filters).subscribe({
+    this.ticketService.getAllTicketsWithFilters({ ...this.filters, page: this.currentPage - 1, size: this.pageSize }).subscribe({
       next: (data) => {
         this.tickets = data.content;
+        this.totalPages = data.totalPages;
+        this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1)
         this.loading = false;
       },
       error: (err) => {
@@ -134,7 +143,7 @@ export class TicketListComponent implements OnInit {
           status: '',
           assignee: undefined
         };
-        this.showForm = false;
+        this.isEditing = false;
       },
       error: (err) => {
         this.error = 'Failed to create ticket';
@@ -146,7 +155,6 @@ export class TicketListComponent implements OnInit {
     this.newTicket = { ...ticket };
     this.isEditing = true;
     this.editingTicketId = ticket.id;
-    this.showForm = true;
   }
 
   updateTicket(form: NgForm): void {
@@ -169,7 +177,6 @@ export class TicketListComponent implements OnInit {
           };
           this.isEditing = false;
           this.editingTicketId = null;
-          this.showForm = false;
         },
         error: (err) => {
           this.error = 'Failed to update ticket';
@@ -195,18 +202,10 @@ export class TicketListComponent implements OnInit {
     });
   }
 
-  toggleForm(): void {
-    this.showForm = !this.showForm;
-    if (!this.showForm) {
-      this.isEditing = false;
-      this.editingTicketId = null;
-      this.newTicket = {
-        ticketNo: '',
-        title: '',
-        body: '',
-        status: '',
-        assignee: undefined
-      };
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadTickets();
     }
   }
 }
