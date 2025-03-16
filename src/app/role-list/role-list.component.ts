@@ -5,11 +5,12 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { RoleService } from '@services/role.service';
 
 import { Role } from '@models/role.model';
+import { RoleModalComponent } from 'app/role-modal/role-modal.component';
 
 @Component({
   selector: 'app-role-list',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RoleModalComponent],
   templateUrl: './role-list.component.html',
   styleUrls: ['./role-list.component.scss']
 })
@@ -25,6 +26,12 @@ export class RoleListComponent implements OnInit {
     description: ''
   };
 
+  // Pagination properties
+  currentPage = 1;
+  totalPages = 1;
+  pageSize = 3;
+  pages: number[] = [];
+
   constructor(private roleService: RoleService) {}
 
   ngOnInit(): void {
@@ -33,9 +40,11 @@ export class RoleListComponent implements OnInit {
 
   loadRoles(): void {
     this.loading = true;
-    this.roleService.getAllRoles(0, 10).subscribe({
+    this.roleService.getAllRoles (this.currentPage - 1, this.totalPages).subscribe({
       next: (data) => {
         this.roles = data.content;
+        this.totalPages = data.totalPages;
+        this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
         this.loading = false;
       },
       error: (err) => {
@@ -128,5 +137,12 @@ export class RoleListComponent implements OnInit {
         }
       }
     });
+  }
+
+  goToPage(page : number): void {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.loadRoles();
+    }
   }
 }
