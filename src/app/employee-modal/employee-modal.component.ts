@@ -32,8 +32,9 @@ export class EmployeeModalComponent {
   @Output() saveEmployee = new EventEmitter<{form: NgForm, selectedRoleId: number | null }>();
 
   onSave(form: NgForm): void {
-    if (form.valid) {
-      this.saveEmployee.emit({ form, selectedRoleId: this.selectedRoleId });
+    if (!form.valid) {
+      return;
     }
+    this.saveEmployee.emit({ form, selectedRoleId: this.selectedRoleId });
   }
 }

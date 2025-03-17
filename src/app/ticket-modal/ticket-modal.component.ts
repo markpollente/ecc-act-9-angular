@@ -27,12 +27,15 @@ export class TicketModalComponent {
   };
   @Input() employees: Employee[] = [];
   @Input() selectedEmployeeId: number | null = null;
-  @Output() saveTicket = new EventEmitter<NgForm>();
+  @Output() saveTicket = new EventEmitter<{form: NgForm, selectedEmployeeId: number | null }>();
 
   ticketStatuses: string[] = ['FILED', 'DRAFT', 'INPROGRESS', 'DUPLICATE', 'CLOSED'];
 
   onSave(form: NgForm): void {
-    this.saveTicket.emit(form);
+    if (!form.valid) {
+      return;
+    }
+    this.saveTicket.emit({form, selectedEmployeeId: this.selectedEmployeeId });
   }
 
 }

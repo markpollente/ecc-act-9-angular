@@ -10,6 +10,19 @@ import { TicketService } from '@services/ticket.service';
 import { EmployeeService } from '@services/employee.service';
 import { TicketModalComponent } from 'app/ticket-modal/ticket-modal.component';
 
+interface Filters {
+  ticketNo: string;
+  title: string;
+  status: string;
+  assignee: string;
+  createdDateStart: string;
+  createdDateEnd: string;
+  updatedDateStart: string;
+  updatedDateEnd: string;
+  createdBy: string;
+  updatedBy: string;
+}
+
 @Component({
   selector: 'app-ticket-list',
   standalone: true,
@@ -21,36 +34,8 @@ export class TicketListComponent implements OnInit {
   tickets: Ticket[] = [];
   employees: Employee[] = [];
   ticketStatuses: string[] = ['FILED', 'DRAFT', 'INPROGRESS', 'DUPLICATE', 'CLOSED'];
-  filters: {
-    ticketNo: string;
-    title: string;
-    status: string;
-    assignee?: string | null;
-    createdDateStart?: string;
-    createdDateEnd?: string;
-    updatedDateStart?: string;
-    updatedDateEnd?: string;
-    createdBy?: string;
-    updatedBy?: string;
-  } = {
-      ticketNo: '',
-      title: '',
-      status: '',
-      assignee: '',
-      createdDateStart: '',
-      createdDateEnd: '',
-      updatedDateStart: '',
-      updatedDateEnd: '',
-      createdBy: '',
-      updatedBy: ''
-    };
-  newTicket: Ticket = {
-    ticketNo: '',
-    title: '',
-    body: '',
-    status: '',
-    assignee: undefined
-  };
+  filters: Filters = this.getEmptyFilters();
+  newTicket: Ticket = this.getEmptyTicket();
   isEditing = false;
   editingTicketId: number | null | undefined = null;
   selectedEmployeeId: number | null = null;
@@ -105,44 +90,21 @@ export class TicketListComponent implements OnInit {
   }
 
   clearFilters(): void {
-    this.filters = {
-      ticketNo: '',
-      title: '',
-      status: '',
-      assignee: '',
-      createdDateStart: '',
-      createdDateEnd: '',
-      updatedDateStart: '',
-      updatedDateEnd: '',
-      createdBy: '',
-      updatedBy: ''
-    };
-
-    const createdDateStartInput = document.getElementById('filterCreatedDateStart') as HTMLInputElement;
-    const createdDateEndInput = document.getElementById('filterCreatedDateEnd') as HTMLInputElement;
-    const updatedDateStartInput = document.getElementById('filterUpdatedDateStart') as HTMLInputElement;
-    const updatedDateEndInput = document.getElementById('filterUpdatedDateEnd') as HTMLInputElement;
-
-    if (createdDateStartInput) createdDateStartInput.value = '';
-    if (createdDateEndInput) createdDateEndInput.value = '';
-    if (updatedDateStartInput) updatedDateStartInput.value = '';
-    if (updatedDateEndInput) updatedDateEndInput.value = '';
+    this.filters = this.getEmptyFilters();
+    this.resetDateInputs();
   }
 
-  createTicket(form: NgForm): void {
+  createTicket(event: { form: NgForm, selectedEmployeeId: number | null }): void {
+    const { form, selectedEmployeeId } = event;
+    this.selectedEmployeeId = selectedEmployeeId;
     if (form.invalid) {
       return;
     }
     this.ticketService.createTicket(this.newTicket).subscribe({
       next: (ticket) => {
         this.tickets.push(ticket);
-        this.newTicket = {
-          ticketNo: '',
-          title: '',
-          body: '',
-          status: '',
-          assignee: undefined
-        };
+        this.assignTicketToEmployee(ticket.id!);
+        this.getEmptyTicket();
         this.isEditing = false;
       },
       error: (err) => {
@@ -157,7 +119,9 @@ export class TicketListComponent implements OnInit {
     this.editingTicketId = ticket.id;
   }
 
-  updateTicket(form: NgForm): void {
+  updateTicket(event: { form: NgForm, selectedEmployeeId: number | null }): void {
+    const { form, selectedEmployeeId } = event;
+    this.selectedEmployeeId = selectedEmployeeId;
     if (form.invalid) {
       return;
     }
@@ -168,13 +132,11 @@ export class TicketListComponent implements OnInit {
           if (index !== -1) {
             this.tickets[index] = updatedTicket;
           }
-          this.newTicket = {
-            ticketNo: '',
-            title: '',
-            body: '',
-            status: '',
-            assignee: undefined
-          };
+          console.log(selectedEmployeeId);
+          if (this.editingTicketId !== null && this.editingTicketId !== undefined) {
+            this.assignTicketToEmployee(this.editingTicketId);
+          }
+          this.getEmptyTicket();
           this.isEditing = false;
           this.editingTicketId = null;
         },
@@ -202,10 +164,66 @@ export class TicketListComponent implements OnInit {
     });
   }
 
+  assignTicketToEmployee(ticketId: number): void {
+    if (this.selectedEmployeeId !== null) {
+      this.ticketService.assignTicketToEmployee(ticketId, this.selectedEmployeeId).subscribe({
+        next: (ticket) => {
+          const index = this.tickets.findIndex(t => t.id === ticketId);
+          if (index !== -1) {
+            this.tickets[index] = ticket;
+          }
+        },
+        error: (err) => {
+          this.error = 'Failed to assign role';
+        }
+      });
+    }
+  }
+
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
       this.loadTickets();
     }
+  }
+
+  private getEmptyTicket(): Ticket {
+      return {
+        ticketNo: '',
+        title: '',
+        status: '',
+        body: '',
+        createdDate: '',
+        updatedDate: '',
+        createdBy: '',
+        updatedBy: ''
+      };
+  }
+
+  private getEmptyFilters(): Filters {
+    return {
+      ticketNo: '',
+      title: '',
+      status: '',
+      assignee: '',
+      createdDateStart: '',
+      createdDateEnd: '',
+      updatedDateStart: '',
+      updatedDateEnd: '',
+      createdBy: '',
+      updatedBy: ''
+    };
+  }
+
+  private resetDateInputs(): void {
+    const createdDateStartInput = document.getElementById('filterCreatedDateStart') as HTMLInputElement;
+    const createdDateEndInput = document.getElementById('filterCreatedDateEnd') as HTMLInputElement;
+    const updatedDateStartInput = document.getElementById('filterUpdatedDateStart') as HTMLInputElement;
+    const updatedDateEndInput = document.getElementById('filterUpdatedDateEnd') as HTMLInputElement;
+
+    if (createdDateStartInput) createdDateStartInput.value = '';
+    if (createdDateEndInput) createdDateEndInput.value = '';
+    if (updatedDateStartInput) updatedDateStartInput.value = '';
+    if (updatedDateEndInput) updatedDateEndInput.value = '';
   }
 }

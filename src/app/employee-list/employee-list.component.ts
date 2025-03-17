@@ -121,6 +121,7 @@ export class EmployeeListComponent implements OnInit {
         this.employees.push(employee);
         this.assignRoleToEmployee(employee.id!);
         this.getEmptyEmployee();
+        this.isEditing = false;
       },
       error: (err) => {
         this.error = 'Failed to create employee';
@@ -147,6 +148,7 @@ export class EmployeeListComponent implements OnInit {
           if (index !== -1) {
             this.employees[index] = updatedEmployee;
           }
+          console.log(selectedRoleId);
           if (this.editingEmployeeId !== null && this.editingEmployeeId !== undefined) {
             this.assignRoleToEmployee(this.editingEmployeeId);
           }

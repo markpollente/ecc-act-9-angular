@@ -39,9 +39,9 @@
           <div class="row mb-3">
             <label for="assignee" class="col-sm-2 col-form-label">Assignee:</label>
             <div class="col-sm-10">
-              <select id="assignee" name="assignee" [(ngModel)]="newTicket.assignee" class="form-select">
+              <select id="assignee" name="assignee" [(ngModel)]="selectedEmployeeId" class="form-select">
                 <option [ngValue]="undefined">Unassigned</option>
-                <option *ngFor="let employee of employees" [ngValue]="employee">{{ employee.firstName }} {{ employee.lastName }}</option>
+                <option *ngFor="let employee of employees" [ngValue]="employee.id">{{ employee.firstName }} {{ employee.lastName }}</option>
               </select>
             </div>
           </div>
