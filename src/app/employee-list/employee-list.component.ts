@@ -11,6 +11,25 @@ import { Employee } from '@models/employee.model';
 import { Role } from '@models/role.model';
 import { EmployeeModalComponent } from '../employee-modal/employee-modal.component';
 
+interface Filters {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  birthday: string;
+  age: string;
+  address: string;
+  contactNumber: string;
+  employmentStatus: string;
+  roles: string;
+  createdDateStart: string;
+  createdDateEnd: string;
+  updatedDateStart: string;
+  updatedDateEnd: string;
+  createdBy: string;
+  updatedBy: string;
+}
+
 @Component({
   selector: 'app-employee-list',
   imports: [CommonModule, FormsModule, EmployeeModalComponent],
@@ -22,41 +41,11 @@ export class EmployeeListComponent implements OnInit {
   roles: Role[] = [];
   loading = true;
   error: string | null = null;
-  newEmployee: Employee = {
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    birthday: '',
-    address: '',
-    contactNumber: '',
-    employmentStatus: '',
-    createdDate: '',
-    updatedDate: '',
-    createdBy: '',
-    updatedBy: ''
-  };
+  newEmployee: Employee = this.getEmptyEmployee();
   isEditing = false;
   editingEmployeeId: number | null | undefined = null;
   selectedRoleId: number | null = null;
-  filters = {
-    id: '',
-    firstName: '',
-    lastName: '',
-    email: '',
-    birthday: '',
-    age: '',
-    address: '',
-    contactNumber: '',
-    employmentStatus: '',
-    roles: '',
-    createdDateStart: '',
-    createdDateEnd: '',
-    updatedDateStart: '',
-    updatedDateEnd: '',
-    createdBy: '',
-    updatedBy: ''
-  };
+  filters: Filters = this.getEmptyFilters();
 
   // Pagination properties
   currentPage = 1;
@@ -78,15 +67,7 @@ export class EmployeeListComponent implements OnInit {
     }
 
     this.loadEmployees();
-
-    this.roleService.getAllRoles(0, 10).subscribe({
-      next: (data) => {
-        this.roles = data.content;
-      },
-      error: (err) => {
-        this.error = 'Failed to load roles';
-      }
-    });
+    this.loadRoles();
   }
 
   loadEmployees(): void {
@@ -105,46 +86,33 @@ export class EmployeeListComponent implements OnInit {
     });
   }
 
+  loadRoles(): void {
+    this.roleService.getAllRoles(0, 10).subscribe({
+      next: (data) => {
+        this.roles = data.content;
+      },
+      error: (err) => {
+        this.error = 'Failed to load roles';
+      }
+    });
+  }
+
   applyFilters(): void {
     this.loadEmployees();
   }
 
   clearFilters(): void {
-    this.filters = {
-      id: '',
-      firstName: '',
-      lastName: '',
-      email: '',
-      birthday: '',
-      age: '',
-      address: '',
-      contactNumber: '',
-      employmentStatus: '',
-      roles: '',
-      createdDateStart: '',
-      createdDateEnd: '',
-      updatedDateStart: '',
-      updatedDateEnd: '',
-      createdBy: '',
-      updatedBy: ''
-    };
-
-    const createdDateStartInput = document.getElementById('filterCreatedDateStart') as HTMLInputElement;
-    const createdDateEndInput = document.getElementById('filterCreatedDateEnd') as HTMLInputElement;
-    const updatedDateStartInput = document.getElementById('filterUpdatedDateStart') as HTMLInputElement;
-    const updatedDateEndInput = document.getElementById('filterUpdatedDateEnd') as HTMLInputElement;
-
-    if (createdDateStartInput) createdDateStartInput.value = '';
-    if (createdDateEndInput) createdDateEndInput.value = '';
-    if (updatedDateStartInput) updatedDateStartInput.value = '';
-    if (updatedDateEndInput) updatedDateEndInput.value = '';
+    this.filters = this.getEmptyFilters();
+    this.resetDateInputs();
   }
 
   getRoles(employee: Employee): string {
     return employee.roles ? employee.roles.map(role => role.name).join(', ') : '';
   }
 
-  createEmployee(form: NgForm): void {
+  createEmployee(event: { form: NgForm, selectedRoleId: number | null }): void {
+    const { form, selectedRoleId } = event;
+    this.selectedRoleId = selectedRoleId;
     if (form.invalid) {
       return;
     }
@@ -152,20 +120,7 @@ export class EmployeeListComponent implements OnInit {
       next: (employee) => {
         this.employees.push(employee);
         this.assignRoleToEmployee(employee.id!);
-        this.newEmployee = {
-          firstName: '',
-          lastName: '',
-          email: '',
-          password: '',
-          birthday: '',
-          address: '',
-          contactNumber: '',
-          employmentStatus: '',
-          createdDate: '',
-          updatedDate: '',
-          createdBy: '',
-          updatedBy: ''
-        };
+        this.getEmptyEmployee();
       },
       error: (err) => {
         this.error = 'Failed to create employee';
@@ -179,7 +134,9 @@ export class EmployeeListComponent implements OnInit {
     this.editingEmployeeId = employee.id;
   }
 
-  updateEmployee(form: NgForm): void {
+  updateEmployee(event: { form: NgForm, selectedRoleId: number | null }): void {
+    const { form, selectedRoleId } = event;
+    this.selectedRoleId = selectedRoleId;
     if (form.invalid) {
       return;
     }
@@ -193,20 +150,7 @@ export class EmployeeListComponent implements OnInit {
           if (this.editingEmployeeId !== null && this.editingEmployeeId !== undefined) {
             this.assignRoleToEmployee(this.editingEmployeeId);
           }
-          this.newEmployee = {
-            firstName: '',
-            lastName: '',
-            email: '',
-            password: '',
-            birthday: '',
-            address: '',
-            contactNumber: '',
-            employmentStatus: '',
-            createdDate: '',
-            updatedDate: '',
-            createdBy: '',
-            updatedBy: ''
-          };
+          this.getEmptyEmployee();
           this.isEditing = false;
           this.editingEmployeeId = null;
         },
@@ -256,5 +200,55 @@ export class EmployeeListComponent implements OnInit {
       this.currentPage = page;
       this.loadEmployees();
     }
+  }
+  
+  private getEmptyEmployee(): Employee {
+    return {
+      firstName: '',
+      lastName: '',
+      email: '',
+      password: '',
+      birthday: '',
+      address: '',
+      contactNumber: '',
+      employmentStatus: '',
+      createdDate: '',
+      updatedDate: '',
+      createdBy: '',
+      updatedBy: ''
+    };
+  }
+
+  private getEmptyFilters(): Filters {
+    return {
+      id: '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      birthday: '',
+      age: '',
+      address: '',
+      contactNumber: '',
+      employmentStatus: '',
+      roles: '',
+      createdDateStart: '',
+      createdDateEnd: '',
+      updatedDateStart: '',
+      updatedDateEnd: '',
+      createdBy: '',
+      updatedBy: ''
+    };
+  }
+
+  private resetDateInputs(): void {
+    const createdDateStartInput = document.getElementById('filterCreatedDateStart') as HTMLInputElement;
+    const createdDateEndInput = document.getElementById('filterCreatedDateEnd') as HTMLInputElement;
+    const updatedDateStartInput = document.getElementById('filterUpdatedDateStart') as HTMLInputElement;
+    const updatedDateEndInput = document.getElementById('filterUpdatedDateEnd') as HTMLInputElement;
+
+    if (createdDateStartInput) createdDateStartInput.value = '';
+    if (createdDateEndInput) createdDateEndInput.value = '';
+    if (updatedDateStartInput) updatedDateStartInput.value = '';
+    if (updatedDateEndInput) updatedDateEndInput.value = '';
   }
 }
