@@ -9,6 +9,7 @@ import { Employee } from '@models/employee.model';
 import { TicketService } from '@services/ticket.service';
 import { EmployeeService } from '@services/employee.service';
 import { TicketModalComponent } from 'app/ticket-modal/ticket-modal.component';
+import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 
 interface Filters {
   ticketNo: string;
@@ -26,7 +27,7 @@ interface Filters {
 @Component({
   selector: 'app-ticket-list',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TicketModalComponent],
+  imports: [CommonModule, RouterModule, FormsModule, TicketModalComponent, PaginationComponent],
   templateUrl: './ticket-list.component.html',
   styleUrls: ['./ticket-list.component.scss']
 })
@@ -46,7 +47,6 @@ export class TicketListComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   pageSize = 3;
-  pages: number[] = [];
 
   constructor(
     private ticketService: TicketService,
@@ -64,7 +64,6 @@ export class TicketListComponent implements OnInit {
       next: (data) => {
         this.tickets = data.content;
         this.totalPages = data.totalPages;
-        this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1)
         this.loading = false;
       },
       error: (err) => {
@@ -180,11 +179,9 @@ export class TicketListComponent implements OnInit {
     }
   }
 
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.loadTickets();
-    }
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadTickets();
   }
 
   private getEmptyTicket(): Ticket {

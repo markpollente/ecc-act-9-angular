@@ -10,6 +10,7 @@ import { RoleService } from '@services/role.service';
 import { Employee } from '@models/employee.model';
 import { Role } from '@models/role.model';
 import { EmployeeModalComponent } from '../employee-modal/employee-modal.component';
+import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 
 interface Filters {
   id: string;
@@ -32,7 +33,7 @@ interface Filters {
 
 @Component({
   selector: 'app-employee-list',
-  imports: [CommonModule, FormsModule, EmployeeModalComponent],
+  imports: [CommonModule, FormsModule, EmployeeModalComponent, PaginationComponent],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss']
 })
@@ -51,7 +52,6 @@ export class EmployeeListComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   pageSize = 3;
-  pages: number[] = [];
 
   constructor(
     private employeeService: EmployeeService,
@@ -76,7 +76,6 @@ export class EmployeeListComponent implements OnInit {
       next: (data) => {
         this.employees = data.content;
         this.totalPages = data.totalPages;
-        this.pages = Array.from({ length: this.totalPages }, (_, i) => i + 1);
         this.loading = false;
       },
       error: (err) => {
@@ -197,11 +196,9 @@ export class EmployeeListComponent implements OnInit {
     }
   }
 
-  goToPage(page: number): void {
-    if (page >= 1 && page <= this.totalPages) {
-      this.currentPage = page;
-      this.loadEmployees();
-    }
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadEmployees();
   }
   
   private getEmptyEmployee(): Employee {
