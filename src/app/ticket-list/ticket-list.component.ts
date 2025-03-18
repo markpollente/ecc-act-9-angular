@@ -93,6 +93,12 @@ export class TicketListComponent implements OnInit {
     this.resetDateInputs();
   }
 
+  openCreateTicketModal(): void {
+    this.isEditing = false;
+    this.newTicket = this.getEmptyTicket();
+    this.selectedEmployeeId = null;
+  }
+
   createTicket(event: { form: NgForm, selectedEmployeeId: number | null }): void {
     const { form, selectedEmployeeId } = event;
     this.selectedEmployeeId = selectedEmployeeId;

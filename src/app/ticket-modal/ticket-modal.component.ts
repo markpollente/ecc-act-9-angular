@@ -17,7 +17,6 @@ export class TicketModalComponent {
     ticketNo: '',
     title: '',
     body: '',
-    assignee: undefined,
     status: '',
     remarks: '',
     createdDate: '',

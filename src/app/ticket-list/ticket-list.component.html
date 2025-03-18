@@ -3,7 +3,7 @@
   <div *ngIf="error">{{ error }}</div>
 
   <!-- Button to toggle form visibility -->
-  <button class="btn btn-primary mb-3 me-3" data-bs-toggle="modal" data-bs-target="#ticketModal">
+  <button class="btn btn-primary mb-3 me-3" data-bs-toggle="modal" data-bs-target="#ticketModal" (click)="openCreateTicketModal()">
     Create Ticket
   </button>
 

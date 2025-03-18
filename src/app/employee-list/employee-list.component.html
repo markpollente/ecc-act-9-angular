@@ -3,7 +3,7 @@
   <div *ngIf="error">{{ error }}</div>
 
   <!-- Button to toggle form visibility -->
-  <button class="btn btn-primary mb-3 me-3" data-bs-toggle="modal" data-bs-target="#employeeModal">Create
+  <button class="btn btn-primary mb-3 me-3" data-bs-toggle="modal" data-bs-target="#employeeModal" (click)="openCreateEmployeeModal()">Create
     Employee</button>
 
   <!-- Button to toggle search filters -->

@@ -45,7 +45,7 @@
               </select>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary">{{ isEditing ? 'Update Ticket' : 'Create Ticket' }}</button>
+          <button type="submit" class="btn btn-primary" [attr.data-bs-dismiss]="ticketForm.valid ? 'modal' : null">{{ isEditing ? 'Update Ticket' : 'Create Ticket' }}</button>
         </form>
       </div>
     </div>

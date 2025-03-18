@@ -109,6 +109,12 @@ export class EmployeeListComponent implements OnInit {
     return employee.roles ? employee.roles.map(role => role.name).join(', ') : '';
   }
 
+  openCreateEmployeeModal(): void {
+    this.isEditing = false;
+    this.newEmployee = this.getEmptyEmployee();
+    this.selectedRoleId = null;
+  }
+
   createEmployee(event: { form: NgForm, selectedRoleId: number | null }): void {
     const { form, selectedRoleId } = event;
     this.selectedRoleId = selectedRoleId;

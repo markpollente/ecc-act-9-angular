@@ -75,7 +75,7 @@
               </select>
             </div>
           </div>
-          <button type="submit" class="btn btn-primary">{{ isEditing ? 'Update Employee' : 'Create Employee' }}</button>
+          <button type="submit" class="btn btn-primary" [attr.data-bs-dismiss]="employeeForm.valid ? 'modal' : null">{{ isEditing ? 'Update Employee' : 'Create Employee' }}</button>
         </form>
       </div>
     </div>
