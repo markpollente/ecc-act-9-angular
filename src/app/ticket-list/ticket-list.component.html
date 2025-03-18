@@ -119,7 +119,7 @@
   </div>
 
   <!-- Pagination Component -->
-  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="onPageChange($event)"></app-pagination>
+  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalItems]="totalItems" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (itemsPerPageChange)="onItemsPerPageChange($event)"></app-pagination>
 
   <!-- Ticket Modal Component -->
   <app-ticket-modal [isEditing]="isEditing" [newTicket]="newTicket" [employees]="employees"

@@ -31,6 +31,7 @@ export class RoleListComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   pageSize = 3;
+  totalItems: number = 0;
 
   constructor(private roleService: RoleService) {}
 
@@ -44,6 +45,7 @@ export class RoleListComponent implements OnInit {
       next: (data) => {
         this.roles = data.content;
         this.totalPages = data.totalPages;
+        this.totalItems = data.totalElements;
         this.loading = false;
       },
       error: (err) => {
@@ -128,6 +130,11 @@ export class RoleListComponent implements OnInit {
 
   onPageChange(page: number): void {
     this.currentPage = page;
+    this.loadRoles();
+  }
+
+  onItemsPerPageChange(itemsPerPage: number): void {
+    this.pageSize = itemsPerPage;
     this.loadRoles();
   }
 }

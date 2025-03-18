@@ -29,7 +29,7 @@
   </table>
 
   <!-- Pagination Component -->
-  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="onPageChange($event)"></app-pagination>
+  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalItems]="totalItems" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (itemsPerPageChange)="onItemsPerPageChange($event)"></app-pagination>
 
   <!-- Role Modal Component -->
   <app-role-modal [isEditing]="isEditing" [newRole]="newRole"

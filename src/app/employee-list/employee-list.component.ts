@@ -52,6 +52,7 @@ export class EmployeeListComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   pageSize = 3;
+  totalItems: number = 0;
 
   constructor(
     private employeeService: EmployeeService,
@@ -76,6 +77,7 @@ export class EmployeeListComponent implements OnInit {
       next: (data) => {
         this.employees = data.content;
         this.totalPages = data.totalPages;
+        this.totalItems = data.totalElements;
         this.loading = false;
       },
       error: (err) => {
@@ -204,6 +206,11 @@ export class EmployeeListComponent implements OnInit {
 
   onPageChange(page: number): void {
     this.currentPage = page;
+    this.loadEmployees();
+  }
+  
+  onItemsPerPageChange(itemsPerPage: number): void {
+    this.pageSize = itemsPerPage;
     this.loadEmployees();
   }
   

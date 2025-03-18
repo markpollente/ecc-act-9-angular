@@ -1,5 +1,5 @@
-<nav>
-  <ul class="pagination">
+<nav class="d-flex  align-items-center mt-3">
+  <ul class="pagination mb-0 me-2">
     <li class="page-item" [class.disabled]="currentPage === 1">
       <button class="page-link" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1">Previous</button>
     </li>
@@ -10,4 +10,17 @@
       <button class="page-link" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages">Next</button>
     </li>
   </ul>
+  <div class="pagination-info text-muted">
+    <span>{{ itemRange }}</span>
+    <span>Per page: 
+      <select (change)="changeItemsPerPage($event)">
+        <option [value]="3" [selected]="pageSize === 3">3</option>
+        <option [value]="10" [selected]="pageSize === 10">10</option>
+        <option [value]="25" [selected]="pageSize === 25">25</option>
+        <option [value]="50" [selected]="pageSize === 50">50</option>
+        <option [value]="100" [selected]="pageSize === 100">100</option>
+      </select>
+    </span>
+  </div>
+  
 </nav>

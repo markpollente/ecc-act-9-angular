@@ -150,7 +150,7 @@
   </div>
 
   <!-- Pagination Component -->
-  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" (pageChange)="onPageChange($event)"></app-pagination>
+  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalItems]="totalItems" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (itemsPerPageChange)="onItemsPerPageChange($event)"></app-pagination>
 
   <!-- Employee Modal Component -->
   <app-employee-modal [isEditing]="isEditing" [newEmployee]="newEmployee" [roles]="roles"

@@ -47,6 +47,7 @@ export class TicketListComponent implements OnInit {
   currentPage = 1;
   totalPages = 1;
   pageSize = 3;
+  totalItems: number = 0;
 
   constructor(
     private ticketService: TicketService,
@@ -64,6 +65,7 @@ export class TicketListComponent implements OnInit {
       next: (data) => {
         this.tickets = data.content;
         this.totalPages = data.totalPages;
+        this.totalItems = data.totalElements;
         this.loading = false;
       },
       error: (err) => {
@@ -187,6 +189,11 @@ export class TicketListComponent implements OnInit {
 
   onPageChange(page: number): void {
     this.currentPage = page;
+    this.loadTickets();
+  }
+
+  onItemsPerPageChange(itemsPerPage: number): void {
+    this.pageSize = itemsPerPage;
     this.loadTickets();
   }
 
