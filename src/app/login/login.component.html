@@ -1,14 +1,23 @@
-<div class="login-container">
-    <h2>Login</h2>
-    <form (ngSubmit)="login()">
-      <div>
-        <label for="email">Email:</label>
-        <input type="email" id="email" [(ngModel)]="email" name="email" required>
+<div class="container-fluid">
+  <div class="row justify-content-center">
+    <div class="col-auto login-container">
+      <div class="card border-warning">
+        <div class="card-body bg-light-warning p-4">
+          <form (ngSubmit)="login()">
+            <div class="mb-3">
+              <label for="email" class="form-label fw-bold text-secondary-emphasis">Login</label>
+              <input type="email" class="form-control" id="email" [(ngModel)]="email" name="email" required>
+            </div>
+            <div class="mb-3">
+              <label for="password" class="form-label fw-bold text-secondary-emphasis">Password</label>
+              <input type="password" class="form-control" id="password" [(ngModel)]="password" name="password" required>
+            </div>
+            <div class="d-grid">
+              <button type="submit" class="btn btn-light">Login</button>
+            </div>
+          </form>
+        </div>
       </div>
-      <div>
-        <label for="password">Password:</label>
-        <input type="password" id="password" [(ngModel)]="password" name="password" required>
-      </div>
-      <button type="submit">Login</button>
-    </form>
+    </div>
   </div>
+</div>

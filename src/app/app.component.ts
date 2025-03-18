@@ -20,8 +20,8 @@ export class AppComponent {
     return this.authService.isAdmin();
   }
 
-  get showNavbar(): boolean {
-    return this.router.url !== '/login';
+  get isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
   }
 
   logout(): void {
