@@ -164,6 +164,7 @@ export class TicketListComponent implements OnInit {
     this.ticketService.deleteTicket(ticketId).subscribe({
       next: () => {
         this.tickets = this.tickets.filter(t => t.id !== ticketId);
+        this.error = null;
       },
       error: (err) => {
         this.error = 'Failed to delete ticket';

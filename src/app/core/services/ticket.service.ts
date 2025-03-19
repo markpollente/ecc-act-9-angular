@@ -49,8 +49,8 @@ export class TicketService {
     return this.http.put<Ticket>(`${this.apiUrl}/${id}`, ticket);
   }
 
-  deleteTicket(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  deleteTicket(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`, { responseType: 'text' });
   }
 
   assignTicketToEmployee(ticketId: number, employeeId: number): Observable<Ticket> {
