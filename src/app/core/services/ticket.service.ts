@@ -58,6 +58,10 @@ export class TicketService {
   }
 
   addRemarkAndUpdateStatus(ticketId: number, remarks: string, status: string): Observable<Ticket> {
-    return this.http.put<Ticket>(`${this.apiUrl}/${ticketId}/remark`, { remarks, status });
+    let params = new HttpParams()
+    .set('remarks', remarks)
+    .set('status', status);
+
+    return this.http.put<Ticket>(`${this.apiUrl}/${ticketId}/remark`, null, { params });
   }
 }
