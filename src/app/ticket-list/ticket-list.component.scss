@@ -17,3 +17,20 @@ th {
 .table-responsive {
     overflow-x: auto;
 }
+
+.active-filters {
+    .col-md-12 {
+      margin-bottom: 0.5rem;
+    }
+  
+    label {
+      min-width: 100px;
+      text-align: right;
+      margin-right: 0.5rem;
+    }
+  }
+  
+  .dropdown-item.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
