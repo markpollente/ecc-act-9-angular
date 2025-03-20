@@ -275,10 +275,12 @@
                     <td *ngIf="columnId === 'updatedBy'">{{ ticket.updatedBy }}</td>
                   </ng-container>
                   <td>
-                    <button class="btn btn-warning btn-sm" (click)="editTicket(ticket)" data-bs-toggle="modal"
-                      data-bs-target="#ticketModal">Update</button>
-                    <button class="btn btn-danger btn-sm" *ngIf="ticket.id !== undefined"
-                      (click)="confirmDeleteTicket(ticket.id!)">Delete</button>
+                    <div class="btn-group" role="group">
+                      <button class="btn btn-warning btn-sm" (click)="editTicket(ticket)" data-bs-toggle="modal"
+                        data-bs-target="#ticketModal">Update</button>
+                      <button class="btn btn-danger btn-sm" *ngIf="ticket.id !== undefined"
+                        (click)="confirmDeleteTicket(ticket.id!)">Delete</button>
+                    </div>
                   </td>
                 </tr>
 
@@ -318,10 +320,12 @@
                 <td *ngIf="columnId === 'updatedBy'">{{ ticket.updatedBy }}</td>
               </ng-container>
               <td>
-                <button class="btn btn-warning btn-sm" (click)="editTicket(ticket)" data-bs-toggle="modal"
-                  data-bs-target="#ticketModal">Update</button>
-                <button class="btn btn-danger btn-sm" *ngIf="ticket.id !== undefined"
-                  (click)="confirmDeleteTicket(ticket.id!)">Delete</button>
+                <div class="btn-group" role="group">
+                  <button class="btn btn-warning btn-sm" (click)="editTicket(ticket)" data-bs-toggle="modal"
+                    data-bs-target="#ticketModal">Update</button>
+                  <button class="btn btn-danger btn-sm" *ngIf="ticket.id !== undefined"
+                    (click)="confirmDeleteTicket(ticket.id!)">Delete</button>
+                </div>
               </td>
             </tr>
 

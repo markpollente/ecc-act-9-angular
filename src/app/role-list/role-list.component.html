@@ -19,17 +19,20 @@
         <td>{{ role.name }}</td>
         <td>{{ role.description }}</td>
         <td>
-          <button class="btn btn-warning btn-sm" (click)="editRole(role)" data-bs-toggle="modal"
-            data-bs-target="#roleModal">Update</button>
-          <button class="btn btn-danger btn-sm" *ngIf="role.id !== undefined"
-            (click)="confirmDeleteRole(role.id!)">Delete</button>
+          <div class="btn-group" role="group">
+            <button class="btn btn-warning btn-sm" (click)="editRole(role)" data-bs-toggle="modal"
+              data-bs-target="#roleModal">Update</button>
+            <button class="btn btn-danger btn-sm" *ngIf="role.id !== undefined"
+              (click)="confirmDeleteRole(role.id!)">Delete</button>
+          </div>
         </td>
       </tr>
     </tbody>
   </table>
 
   <!-- Pagination Component -->
-  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalItems]="totalItems" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (itemsPerPageChange)="onItemsPerPageChange($event)"></app-pagination>
+  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalItems]="totalItems" [pageSize]="pageSize"
+    (pageChange)="onPageChange($event)" (itemsPerPageChange)="onItemsPerPageChange($event)"></app-pagination>
 
   <!-- Role Modal Component -->
   <app-role-modal [isEditing]="isEditing" [newRole]="newRole"

@@ -3,7 +3,8 @@
   <div *ngIf="error">{{ error }}</div>
 
   <!-- Button to toggle form visibility -->
-  <button class="btn btn-primary mb-3 me-3" data-bs-toggle="modal" data-bs-target="#employeeModal" (click)="openCreateEmployeeModal()">Create
+  <button class="btn btn-primary mb-3 me-3" data-bs-toggle="modal" data-bs-target="#employeeModal"
+    (click)="openCreateEmployeeModal()">Create
     Employee</button>
 
   <!-- Button to toggle search filters -->
@@ -139,10 +140,12 @@
           <td>{{ employee.updatedDate }}</td>
           <td>{{ employee.updatedBy }}</td>
           <td>
-            <button class="btn btn-warning btn-sm" (click)="editEmployee(employee)" data-bs-toggle="modal"
-              data-bs-target="#employeeModal">Update</button>
-            <button class="btn btn-danger btn-sm" *ngIf="employee.id !== undefined"
-              (click)="confirmDeleteEmployee(employee.id!)">Delete</button>
+            <div class="btn-group" role="group">
+              <button class="btn btn-warning btn-sm" (click)="editEmployee(employee)" data-bs-toggle="modal"
+                data-bs-target="#employeeModal">Update</button>
+              <button class="btn btn-danger btn-sm" *ngIf="employee.id !== undefined"
+                (click)="confirmDeleteEmployee(employee.id!)">Delete</button>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -150,7 +153,8 @@
   </div>
 
   <!-- Pagination Component -->
-  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalItems]="totalItems" [pageSize]="pageSize" (pageChange)="onPageChange($event)" (itemsPerPageChange)="onItemsPerPageChange($event)"></app-pagination>
+  <app-pagination [currentPage]="currentPage" [totalPages]="totalPages" [totalItems]="totalItems" [pageSize]="pageSize"
+    (pageChange)="onPageChange($event)" (itemsPerPageChange)="onItemsPerPageChange($event)"></app-pagination>
 
   <!-- Employee Modal Component -->
   <app-employee-modal [isEditing]="isEditing" [newEmployee]="newEmployee" [roles]="roles"
