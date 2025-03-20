@@ -58,8 +58,22 @@ export class TicketListComponent implements OnInit {
     { id: 'createdBy', name: 'Created By' },
     { id: 'updatedBy', name: 'Updated By' }
   ];
-  
+  availableColumns = [
+    { id: 'ticketNo', name: 'Ticket No', default: true },
+    { id: 'title', name: 'Title', default: true },
+    { id: 'status', name: 'Status', default: true },
+    { id: 'assignee', name: 'Assignee', default: false },
+    { id: 'createdDate', name: 'Created Date', default: false },
+    { id: 'updatedDate', name: 'Updated Date', default: true },
+    { id: 'createdBy', name: 'Created By', default: false },
+    { id: 'updatedBy', name: 'Updated By', default: false }
+  ];
+  showDescription: boolean = false; 
+  selectedColumns: string[] = [];
   activeFilters: string[] = [];
+  pendingShowDescription: boolean = false;
+  pendingSelectedColumns: string[] = [];
+
   constructor(
     private ticketService: TicketService,
     private employeeService: EmployeeService
@@ -69,6 +83,14 @@ export class TicketListComponent implements OnInit {
     this.activeFilters = this.availableFilters
     .filter(f => f.default)
     .map(f => f.id);
+
+    this.selectedColumns = this.availableColumns
+    .filter(c => c.default)
+    .map(c => c.id);
+
+    this.pendingShowDescription = this.showDescription;
+    this.pendingSelectedColumns = [...this.selectedColumns];
+
     this.loadTickets();
     this.loadEmployees();
   }
@@ -93,14 +115,67 @@ export class TicketListComponent implements OnInit {
     }
   }
 
-  clearFilters(): void {
+  getColumnName(columnId: string): string {
+    const column = this.availableColumns.find(col => col.id === columnId);
+    return column ? column.name : '';
+  }
+
+  getAvailableColumnsForSelection(): any[] {
+    return this.availableColumns.filter(c => !this.pendingSelectedColumns.includes(c.id));
+  }
+
+  getSelectedColumnsForDisplay(): any[] {
+    return this.availableColumns.filter(c => this.pendingSelectedColumns.includes(c.id));
+  }
+
+  addColumn(columnId: string): void {
+    if (!this.pendingSelectedColumns.includes(columnId)) {
+      this.pendingSelectedColumns.push(columnId);
+    }
+  }
+
+  removeColumn(columnId: string): void {
+    this.pendingSelectedColumns = this.pendingSelectedColumns.filter(id => id !== columnId);
+  }
+
+  moveColumnUp(columnId: string): void {
+    const index = this.pendingSelectedColumns.indexOf(columnId);
+    if (index > 0) {
+      this.pendingSelectedColumns.splice(index, 1);
+      this.pendingSelectedColumns.splice(index - 1, 0, columnId);
+    }
+  }
+  
+  moveColumnDown(columnId: string): void {
+    const index = this.pendingSelectedColumns.indexOf(columnId);
+    if (index < this.pendingSelectedColumns.length - 1) {
+      this.pendingSelectedColumns.splice(index, 1);
+      this.pendingSelectedColumns.splice(index + 1, 0, columnId);
+    }
+  }
+
+  applyFiltersAndOptions(): void {
+    this.loadTickets();
+
+    this.showDescription = this.pendingShowDescription;
+    this.selectedColumns = [...this.pendingSelectedColumns];
+    
+    localStorage.setItem('selectedColumns', JSON.stringify(this.selectedColumns));
+  }
+
+  clearFiltersAndOptions(): void {
     this.filters = this.getEmptyFilters();
     this.resetDateInputs();
     this.activeFilters = this.availableFilters
     .filter(f => f.default)
     .map(f => f.id);
-  }
-  
+
+    this.pendingShowDescription = false;
+
+    this.pendingSelectedColumns = this.availableColumns
+    .filter(c => c.default)
+    .map(c => c.id);
+  }  
 
   loadTickets(): void {
     this.loading = true;
@@ -127,10 +202,6 @@ export class TicketListComponent implements OnInit {
         this.error = 'Failed to load employees';
       }
     });
-  }
-
-  applyFilters(): void {
-    this.loadTickets();
   }
 
   openCreateTicketModal(): void {

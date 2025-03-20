@@ -8,12 +8,12 @@
     Create Ticket
   </button>
 
-  <!-- Filter section using Bootstrap's Accordion -->
+  <!-- Filter section -->
   <div class="accordion mb-3" id="filterAccordion">
     <div class="accordion-item">
       <h2 class="accordion-header">
-        <button class="accordion-button" type="button" data-bs-toggle="collapse" 
-          data-bs-target="#filterContent" aria-expanded="true" aria-controls="filterContent">
+        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#filterContent"
+          aria-expanded="true" aria-controls="filterContent">
           Filters
         </button>
       </h2>
@@ -146,47 +146,131 @@
                 </li>
               </ul>
             </div>
-            <button class="btn btn-primary me-2" (click)="applyFilters()">Apply</button>
-            <button class="btn btn-secondary" (click)="clearFilters()">Clear</button>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Ticket table -->
+  <!-- Options -->
+  <div class="accordion mb-3" id="optionsAccordion">
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+          data-bs-target="#optionsContent" aria-expanded="false" aria-controls="optionsContent">
+          Options
+        </button>
+      </h2>
+      <div id="optionsContent" class="accordion-collapse collapse" data-bs-parent="#optionsAccordion">
+        <div class="accordion-body">
+          <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="showDescription" [(ngModel)]="pendingShowDescription">
+            <label class="form-check-label" for="showDescription">Show Description</label>
+          </div>
+          <h6>Columns</h6>
+          <div class="row mb-3">
+            <!-- Available columns -->
+            <div class="col-md-5">
+              <div class="card">
+                <div class="card-header">Available Columns</div>
+                <div class="card-body p-2">
+                  <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-2"
+                      *ngFor="let column of getAvailableColumnsForSelection()">
+                      {{ column.name }}
+                      <button class="btn btn-sm btn-outline-primary" (click)="addColumn(column.id)">→</button>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-2 d-flex justify-content-center align-items-center">
+
+            </div>
+
+            <!-- Selected columns -->
+            <div class="col-md-5">
+              <div class="card">
+                <div class="card-header">Selected Columns</div>
+                <div class="card-body p-2">
+                  <ul class="list-group">
+                    <li class="list-group-item d-flex justify-content-between align-items-center p-2"
+                      *ngFor="let column of getSelectedColumnsForDisplay(); let i = index">
+                      <button class="btn btn-sm btn-outline-primary me-1" (click)="removeColumn(column.id)">←</button>
+                      {{ column.name }}
+                      <div>
+                        <button class="btn btn-sm btn-outline-secondary" (click)="moveColumnUp(column.id)"
+                          [disabled]="i === 0">↑</button>
+                        <button class="btn btn-sm btn-outline-secondary" (click)="moveColumnDown(column.id)"
+                          [disabled]="i === selectedColumns.length - 1">↓</button>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex mb-3">
+    <button class="btn btn-primary me-2" (click)="applyFiltersAndOptions()">Apply</button>
+    <button class="btn btn-secondary" (click)="clearFiltersAndOptions()">Clear</button>
+  </div>
+
+  <!-- The corrected table section -->
   <div class="table-responsive">
     <table class="table table-striped" *ngIf="!loading && !error">
       <thead>
         <tr>
-          <th>Ticket No</th>
-          <th>Title</th>
-          <th>Status</th>
-          <th>Assignee</th>
-          <th>Created Date</th>
-          <th>Created By</th>
-          <th>Updated Date</th>
-          <th>Updated By</th>
+          <!-- Dynamic columns based on selection -->
+          <!-- Replace the problematic line in your table header -->
+          <ng-container *ngFor="let columnId of selectedColumns">
+            <th>{{ getColumnName(columnId) }}</th>
+          </ng-container>
           <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let ticket of tickets">
-          <td><a [routerLink]="['/tickets', ticket.id]">{{ ticket.ticketNo }}</a></td>
-          <td>{{ ticket.title }}</td>
-          <td>{{ ticket.status }}</td>
-          <td>{{ ticket.assignee ? (ticket.assignee.firstName + ' ' + ticket.assignee.lastName) : 'Unassigned' }}</td>
-          <td>{{ ticket.createdDate }}</td>
-          <td>{{ ticket.createdBy }}</td>
-          <td>{{ ticket.updatedDate }}</td>
-          <td>{{ ticket.updatedBy }}</td>
-          <td>
-            <button class="btn btn-warning btn-sm" (click)="editTicket(ticket)" data-bs-toggle="modal"
-              data-bs-target="#ticketModal">Update</button>
-            <button class="btn btn-danger btn-sm" *ngIf="ticket.id !== undefined"
-              (click)="confirmDeleteTicket(ticket.id!)">Delete</button>
-          </td>
-        </tr>
+        <ng-container *ngFor="let ticket of tickets">
+          <!-- Main ticket row -->
+          <tr>
+            <!-- Dynamic cells based on column selection order -->
+            <ng-container *ngFor="let columnId of selectedColumns">
+              <td *ngIf="columnId === 'ticketNo'">
+                <a [routerLink]="['/tickets', ticket.id]">{{ ticket.ticketNo }}</a>
+              </td>
+              <td *ngIf="columnId === 'title'">{{ ticket.title }}</td>
+              <td *ngIf="columnId === 'status'">{{ ticket.status }}</td>
+              <td *ngIf="columnId === 'assignee'">
+                {{ ticket.assignee ? (ticket.assignee.firstName + ' ' + ticket.assignee.lastName) : 'Unassigned' }}
+              </td>
+              <td *ngIf="columnId === 'createdDate'">{{ ticket.createdDate }}</td>
+              <td *ngIf="columnId === 'createdBy'">{{ ticket.createdBy }}</td>
+              <td *ngIf="columnId === 'updatedDate'">{{ ticket.updatedDate }}</td>
+              <td *ngIf="columnId === 'updatedBy'">{{ ticket.updatedBy }}</td>
+            </ng-container>
+            <td>
+              <button class="btn btn-warning btn-sm" (click)="editTicket(ticket)" data-bs-toggle="modal"
+                data-bs-target="#ticketModal">Update</button>
+              <button class="btn btn-danger btn-sm" *ngIf="ticket.id !== undefined"
+                (click)="confirmDeleteTicket(ticket.id!)">Delete</button>
+            </td>
+          </tr>
+
+          <tr *ngIf="showDescription">
+            <td [attr.colspan]="selectedColumns.length + 1" class="description-cell">
+              <div class="ticket-description p-3">
+                <div class="p-2 bg-light border rounder">
+                  <p class="mb-0 text-pre-wrap">{{ ticket.body }}</p>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>       
       </tbody>
     </table>
   </div>

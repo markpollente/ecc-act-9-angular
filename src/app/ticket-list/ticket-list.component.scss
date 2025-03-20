@@ -1,39 +1,53 @@
 table {
-    width: 100%;
-    border-collapse: collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
 th,
 td {
-    padding: 8px;
-    text-align: left;
-    border-bottom: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
 th {
-    background-color: #f4f4f4;
+  background-color: #f4f4f4;
 }
 
 .table-responsive {
-    overflow-x: auto;
+  overflow-x: auto;
 }
 
 .active-filters {
-    label {
-      min-width: 100px;
-      text-align: right;
-    }
-    
-    .input-group {
-      flex-wrap: nowrap;
-    }
-    
-    .input-group input.form-control {
-      min-width: 0;
-    }
+  label {
+    min-width: 100px;
+    text-align: right;
   }
-  
-  .dropdown-item.disabled {
-    opacity: 0.5;
-    pointer-events: none;
+
+  .input-group {
+    flex-wrap: nowrap;
   }
+
+  .input-group input.form-control {
+    min-width: 0;
+  }
+}
+
+.dropdown-item.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.description-cell {
+  background-color: #f8f9fa;
+  border-top: none;
+}
+
+.text-pre-wrap {
+  white-space: pre-wrap;
+  font-family: inherit;
+}
+
+.ticket-description {
+  border-left: 3px solid #6c757d;
+}
