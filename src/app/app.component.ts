@@ -1,31 +1,15 @@
 import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
-
-import { AuthService } from '@services/auth.service';
+import { NavbarComponent } from './shared/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, CommonModule],
+  imports: [RouterModule, CommonModule, NavbarComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
   title = 'helpdesk-ui';
-
-  constructor(private authService: AuthService, private router: Router) {}
-
-  get isAdmin(): boolean {
-    return this.authService.isAdmin();
-  }
-
-  get isLoggedIn(): boolean {
-    return this.authService.isLoggedIn();
-  }
-
-  logout(): void {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
 }
