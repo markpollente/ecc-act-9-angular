@@ -17,3 +17,23 @@ th {
 .table-responsive {
     overflow-x: auto;
 }
+
+.active-filters {
+    label {
+      min-width: 100px;
+      text-align: right;
+    }
+    
+    .input-group {
+      flex-wrap: nowrap;
+    }
+    
+    .input-group input.form-control {
+      min-width: 0;
+    }
+  }
+  
+  .dropdown-item.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }

@@ -48,16 +48,59 @@ export class TicketListComponent implements OnInit {
   totalPages = 1;
   pageSize = 3;
   totalItems: number = 0;
-
+  availableFilters = [
+    { id: 'ticketNo', name: 'Ticket No' },
+    { id: 'title', name: 'Title' },
+    { id: 'status', name: 'Status', default: true },
+    { id: 'assignee', name: 'Assignee' },
+    { id: 'createdDateRange', name: 'Created Date Range' },
+    { id: 'updatedDateRange', name: 'Updated Date Range' },
+    { id: 'createdBy', name: 'Created By' },
+    { id: 'updatedBy', name: 'Updated By' }
+  ];
+  
+  activeFilters: string[] = [];
   constructor(
     private ticketService: TicketService,
     private employeeService: EmployeeService
   ) { }
 
   ngOnInit(): void {
+    this.activeFilters = this.availableFilters
+    .filter(f => f.default)
+    .map(f => f.id);
     this.loadTickets();
     this.loadEmployees();
   }
+
+  addFilter(filterId: string): void {
+    if (!this.activeFilters.includes(filterId)) {
+      this.activeFilters.push(filterId);
+    }
+  }
+
+  removeFilter(filterId: string): void {
+    this.activeFilters = this.activeFilters.filter(id => id !== filterId);
+
+    if (filterId === 'createdDateRange') {
+      this.filters.createdDateStart = '';
+      this.filters.createdDateEnd = '';
+    } else if (filterId === 'updatedDateRange') {
+      this.filters.updatedDateStart = '';
+      this.filters.updatedDateEnd = '';
+    } else if (filterId in this.filters) {
+      (this.filters as any)[filterId] = '';
+    }
+  }
+
+  clearFilters(): void {
+    this.filters = this.getEmptyFilters();
+    this.resetDateInputs();
+    this.activeFilters = this.availableFilters
+    .filter(f => f.default)
+    .map(f => f.id);
+  }
+  
 
   loadTickets(): void {
     this.loading = true;
@@ -88,11 +131,6 @@ export class TicketListComponent implements OnInit {
 
   applyFilters(): void {
     this.loadTickets();
-  }
-
-  clearFilters(): void {
-    this.filters = this.getEmptyFilters();
-    this.resetDateInputs();
   }
 
   openCreateTicketModal(): void {
