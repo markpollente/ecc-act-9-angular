@@ -42,8 +42,6 @@ export class TicketListComponent implements OnInit {
   selectedEmployeeId: number | null = null;
   loading = true;
   error: string | null = null;
-
-  // Pagination properties
   currentPage = 1;
   totalPages = 1;
   pageSize = 3;
@@ -68,11 +66,20 @@ export class TicketListComponent implements OnInit {
     { id: 'createdBy', name: 'Created By', default: false },
     { id: 'updatedBy', name: 'Updated By', default: false }
   ];
-  showDescription: boolean = false; 
+  groupByOptions = [
+    { id: 'none', name: 'No grouping' },
+    { id: 'status', name: 'Status' },
+    { id: 'assignee', name: 'Assignee' },
+    { id: 'createdBy', name: 'Created by' },
+    { id: 'updatedBy', name: 'Updated by' }
+  ];
+  showDescription: boolean = false;
   selectedColumns: string[] = [];
   activeFilters: string[] = [];
   pendingShowDescription: boolean = false;
   pendingSelectedColumns: string[] = [];
+  pendingGroupBy: string = 'none';
+  groupBy: string = 'none';
 
   constructor(
     private ticketService: TicketService,
@@ -81,12 +88,12 @@ export class TicketListComponent implements OnInit {
 
   ngOnInit(): void {
     this.activeFilters = this.availableFilters
-    .filter(f => f.default)
-    .map(f => f.id);
+      .filter(f => f.default)
+      .map(f => f.id);
 
     this.selectedColumns = this.availableColumns
-    .filter(c => c.default)
-    .map(c => c.id);
+      .filter(c => c.default)
+      .map(c => c.id);
 
     this.pendingShowDescription = this.showDescription;
     this.pendingSelectedColumns = [...this.selectedColumns];
@@ -145,7 +152,7 @@ export class TicketListComponent implements OnInit {
       this.pendingSelectedColumns.splice(index - 1, 0, columnId);
     }
   }
-  
+
   moveColumnDown(columnId: string): void {
     const index = this.pendingSelectedColumns.indexOf(columnId);
     if (index < this.pendingSelectedColumns.length - 1) {
@@ -159,23 +166,77 @@ export class TicketListComponent implements OnInit {
 
     this.showDescription = this.pendingShowDescription;
     this.selectedColumns = [...this.pendingSelectedColumns];
-    
+    this.groupBy = this.pendingGroupBy;
+
     localStorage.setItem('selectedColumns', JSON.stringify(this.selectedColumns));
+    localStorage.setItem('groupBy', this.groupBy);
   }
 
   clearFiltersAndOptions(): void {
     this.filters = this.getEmptyFilters();
     this.resetDateInputs();
     this.activeFilters = this.availableFilters
-    .filter(f => f.default)
-    .map(f => f.id);
+      .filter(f => f.default)
+      .map(f => f.id);
 
     this.pendingShowDescription = false;
 
     this.pendingSelectedColumns = this.availableColumns
-    .filter(c => c.default)
-    .map(c => c.id);
-  }  
+      .filter(c => c.default)
+      .map(c => c.id);
+
+    this.pendingGroupBy = 'none';  
+  }
+
+  getGroupedTickets(): any {
+    if (this.groupBy === 'none') {
+      return this.tickets;
+    }
+
+    const groupedTickets: any = {};
+    
+    for (const ticket of this.tickets) {
+      let groupValue: string;
+
+      if (this.groupBy === 'status') {
+        groupValue = ticket.status || 'No status';
+      } else if (this.groupBy === 'assignee') {
+        groupValue = ticket.assignee ?
+        `${ticket.assignee.firstName} ${ticket.assignee.lastName}` : 'Unassigned';
+      } else if (this.groupBy === 'createdBy') {
+        groupValue = ticket.createdBy || 'Unknown';
+      } else if (this.groupBy === 'updatedBy') {
+        groupValue = ticket.updatedBy || 'Unknown';
+      } else {
+        groupValue = 'Other';
+      }
+
+      if(!groupedTickets[groupValue]) {
+        groupedTickets[groupValue] = [];
+      }
+
+      groupedTickets[groupValue].push(ticket);
+    }
+
+    // Convert to array format for the template
+    const result: any[] = [];
+    for (const group in groupedTickets) {
+      result.push({
+        name: group,
+        tickets: groupedTickets[group],
+        isExpanded: true
+      });
+    }
+    return result;
+  } 
+
+  isGrouped(): boolean {
+    return this.groupBy !== 'none';
+  }
+
+  toggleGroup(group: any): void {
+    group.isExpanded = !group.isExpanded;
+  }
 
   loadTickets(): void {
     this.loading = true;
@@ -308,16 +369,16 @@ export class TicketListComponent implements OnInit {
   }
 
   private getEmptyTicket(): Ticket {
-      return {
-        ticketNo: '',
-        title: '',
-        status: '',
-        body: '',
-        createdDate: '',
-        updatedDate: '',
-        createdBy: '',
-        updatedBy: ''
-      };
+    return {
+      ticketNo: '',
+      title: '',
+      status: '',
+      body: '',
+      createdDate: '',
+      updatedDate: '',
+      createdBy: '',
+      updatedBy: ''
+    };
   }
 
   private getEmptyFilters(): Filters {

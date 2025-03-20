@@ -167,6 +167,12 @@
             <input class="form-check-input" type="checkbox" id="showDescription" [(ngModel)]="pendingShowDescription">
             <label class="form-check-label" for="showDescription">Show Description</label>
           </div>
+          <div class="form-group mb-3">
+            <label for="groupResults" class="form-label">Group results by:</label>
+            <select class="form-select" id="groupResults" [(ngModel)]="pendingGroupBy">
+              <option *ngFor="let option of groupByOptions" [value]="option.id">{{ option.name }}</option>
+            </select>
+          </div>
           <h6>Columns</h6>
           <div class="row mb-3">
             <!-- Available columns -->
@@ -221,13 +227,12 @@
     <button class="btn btn-secondary" (click)="clearFiltersAndOptions()">Clear</button>
   </div>
 
-  <!-- The corrected table section -->
+  <!-- Table section -->
   <div class="table-responsive">
     <table class="table table-striped" *ngIf="!loading && !error">
       <thead>
         <tr>
           <!-- Dynamic columns based on selection -->
-          <!-- Replace the problematic line in your table header -->
           <ng-container *ngFor="let columnId of selectedColumns">
             <th>{{ getColumnName(columnId) }}</th>
           </ng-container>
@@ -235,42 +240,103 @@
         </tr>
       </thead>
       <tbody>
-        <ng-container *ngFor="let ticket of tickets">
-          <!-- Main ticket row -->
-          <tr>
-            <!-- Dynamic cells based on column selection order -->
-            <ng-container *ngFor="let columnId of selectedColumns">
-              <td *ngIf="columnId === 'ticketNo'">
-                <a [routerLink]="['/tickets', ticket.id]">{{ ticket.ticketNo }}</a>
+        <!-- When grouping is enabled -->
+        <ng-container *ngIf="isGrouped()">
+          <ng-container *ngFor="let group of getGroupedTickets()">
+            <!-- Group header row -->
+            <tr class="group-header">
+              <td [attr.colspan]="selectedColumns.length + 1" class="bg-light">
+                <button class="btn btn-sm btn-link" (click)="toggleGroup(group)">
+                  <i class="bi" [ngClass]="group.isExpanded ? 'bi-caret-down-fill' : 'bi-caret-right-fill'"></i>
+                  <strong>{{ group.name }}</strong> ({{ group.tickets.length }} items)
+                </button>
               </td>
-              <td *ngIf="columnId === 'title'">{{ ticket.title }}</td>
-              <td *ngIf="columnId === 'status'">{{ ticket.status }}</td>
-              <td *ngIf="columnId === 'assignee'">
-                {{ ticket.assignee ? (ticket.assignee.firstName + ' ' + ticket.assignee.lastName) : 'Unassigned' }}
-              </td>
-              <td *ngIf="columnId === 'createdDate'">{{ ticket.createdDate }}</td>
-              <td *ngIf="columnId === 'createdBy'">{{ ticket.createdBy }}</td>
-              <td *ngIf="columnId === 'updatedDate'">{{ ticket.updatedDate }}</td>
-              <td *ngIf="columnId === 'updatedBy'">{{ ticket.updatedBy }}</td>
-            </ng-container>
-            <td>
-              <button class="btn btn-warning btn-sm" (click)="editTicket(ticket)" data-bs-toggle="modal"
-                data-bs-target="#ticketModal">Update</button>
-              <button class="btn btn-danger btn-sm" *ngIf="ticket.id !== undefined"
-                (click)="confirmDeleteTicket(ticket.id!)">Delete</button>
-            </td>
-          </tr>
+            </tr>
 
-          <tr *ngIf="showDescription">
-            <td [attr.colspan]="selectedColumns.length + 1" class="description-cell">
-              <div class="ticket-description p-3">
-                <div class="p-2 bg-light border rounder">
-                  <p class="mb-0 text-pre-wrap">{{ ticket.body }}</p>
+            <!-- Group content rows -->
+            <ng-container *ngIf="group.isExpanded">
+              <ng-container *ngFor="let ticket of group.tickets">
+                <!-- Main ticket row -->
+                <tr>
+                  <!-- Dynamic cells based on column selection order -->
+                  <ng-container *ngFor="let columnId of selectedColumns">
+                    <td *ngIf="columnId === 'ticketNo'">
+                      <a [routerLink]="['/tickets', ticket.id]">{{ ticket.ticketNo }}</a>
+                    </td>
+                    <td *ngIf="columnId === 'title'">{{ ticket.title }}</td>
+                    <td *ngIf="columnId === 'status'">{{ ticket.status }}</td>
+                    <td *ngIf="columnId === 'assignee'">
+                      {{ ticket.assignee ? (ticket.assignee.firstName + ' ' + ticket.assignee.lastName) : 'Unassigned'
+                      }}
+                    </td>
+                    <td *ngIf="columnId === 'createdDate'">{{ ticket.createdDate }}</td>
+                    <td *ngIf="columnId === 'createdBy'">{{ ticket.createdBy }}</td>
+                    <td *ngIf="columnId === 'updatedDate'">{{ ticket.updatedDate }}</td>
+                    <td *ngIf="columnId === 'updatedBy'">{{ ticket.updatedBy }}</td>
+                  </ng-container>
+                  <td>
+                    <button class="btn btn-warning btn-sm" (click)="editTicket(ticket)" data-bs-toggle="modal"
+                      data-bs-target="#ticketModal">Update</button>
+                    <button class="btn btn-danger btn-sm" *ngIf="ticket.id !== undefined"
+                      (click)="confirmDeleteTicket(ticket.id!)">Delete</button>
+                  </td>
+                </tr>
+
+                <!-- Description row -->
+                <tr *ngIf="showDescription">
+                  <td [attr.colspan]="selectedColumns.length + 1" class="description-cell">
+                    <div class="ticket-description p-3">
+                      <div class="p-2 bg-light border rounded">
+                        <p class="mb-0 text-pre-wrap">{{ ticket.body }}</p>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </ng-container>
+            </ng-container>
+          </ng-container>
+        </ng-container>
+
+        <!-- When no grouping is used (standard view) -->
+        <ng-container *ngIf="!isGrouped()">
+          <ng-container *ngFor="let ticket of tickets">
+            <!-- Main ticket row -->
+            <tr>
+              <!-- Dynamic cells based on column selection order -->
+              <ng-container *ngFor="let columnId of selectedColumns">
+                <td *ngIf="columnId === 'ticketNo'">
+                  <a [routerLink]="['/tickets', ticket.id]">{{ ticket.ticketNo }}</a>
+                </td>
+                <td *ngIf="columnId === 'title'">{{ ticket.title }}</td>
+                <td *ngIf="columnId === 'status'">{{ ticket.status }}</td>
+                <td *ngIf="columnId === 'assignee'">
+                  {{ ticket.assignee ? (ticket.assignee.firstName + ' ' + ticket.assignee.lastName) : 'Unassigned' }}
+                </td>
+                <td *ngIf="columnId === 'createdDate'">{{ ticket.createdDate }}</td>
+                <td *ngIf="columnId === 'createdBy'">{{ ticket.createdBy }}</td>
+                <td *ngIf="columnId === 'updatedDate'">{{ ticket.updatedDate }}</td>
+                <td *ngIf="columnId === 'updatedBy'">{{ ticket.updatedBy }}</td>
+              </ng-container>
+              <td>
+                <button class="btn btn-warning btn-sm" (click)="editTicket(ticket)" data-bs-toggle="modal"
+                  data-bs-target="#ticketModal">Update</button>
+                <button class="btn btn-danger btn-sm" *ngIf="ticket.id !== undefined"
+                  (click)="confirmDeleteTicket(ticket.id!)">Delete</button>
+              </td>
+            </tr>
+
+            <!-- Description row -->
+            <tr *ngIf="showDescription">
+              <td [attr.colspan]="selectedColumns.length + 1" class="description-cell">
+                <div class="ticket-description p-3">
+                  <div class="p-2 bg-light border rounded">
+                    <p class="mb-0 text-pre-wrap">{{ ticket.body }}</p>
+                  </div>
                 </div>
-              </div>
-            </td>
-          </tr>
-        </ng-container>       
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
       </tbody>
     </table>
   </div>
