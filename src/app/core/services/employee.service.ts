@@ -59,4 +59,8 @@ export class EmployeeService {
   getAssignedTickets(): Observable<Ticket[]> {
     return this.http.get<Ticket[]>(`${this.apiUrl}/profile/assigned`);
   }
+
+  getEmployeeDirectory(page: number = 0, size: number = 100): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/directory?page=${page}&size=${size}`);
+  }
 }

@@ -72,4 +72,18 @@ export class TicketService {
   getPersonalTicketCounts(): Observable<{[key: string]: number}> {
     return this.http.get<{[key: string]: number}>(`${this.apiUrl}/profile/ticket-counts`);
   }
+
+  getRelevantTicketsWithFilters(filters: any, page: number = 0, size: number = 10): Observable<any> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    
+    Object.keys(filters).forEach(key => {
+      if (filters[key] !== null && filters[key] !== '') {
+        params = params.set(key, filters[key]);
+      }
+    });
+    
+    return this.http.get<any>(`${this.apiUrl}/relevant`, { params });
+  }
 }

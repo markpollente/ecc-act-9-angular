@@ -10,6 +10,7 @@ import { TicketService } from '@services/ticket.service';
 import { EmployeeService } from '@services/employee.service';
 import { TicketModalComponent } from 'app/ticket-modal/ticket-modal.component';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
+import { AuthService } from '@core/services/auth.service';
 
 interface Filters {
   ticketNo: string;
@@ -83,7 +84,8 @@ export class TicketListComponent implements OnInit {
 
   constructor(
     private ticketService: TicketService,
-    private employeeService: EmployeeService
+    private employeeService: EmployeeService,
+    private authService: AuthService,
   ) { }
 
   ngOnInit(): void {
@@ -98,10 +100,50 @@ export class TicketListComponent implements OnInit {
     this.pendingShowDescription = this.showDescription;
     this.pendingSelectedColumns = [...this.selectedColumns];
 
-    this.loadTickets();
-    this.loadEmployees();
+    this.applyRoleBasedFilters();
   }
 
+  applyRoleBasedFilters(): void {
+    this.loadEmployeeDirectory();
+    
+    if (this.authService.isAdmin()) {
+      this.loadTickets();
+    } else {
+      this.loadRelevantTickets();
+    }
+  }
+
+  loadEmployeeDirectory(): void {
+    this.employeeService.getEmployeeDirectory(0, 100).subscribe({
+      next: (data) => {
+        this.employees = data.content;
+      },
+      error: (err) => {
+        this.error = 'Failed to load employee directory';
+      }
+    });
+  }
+  
+  loadRelevantTickets(): void {
+    this.loading = true;
+    this.error = null;
+    
+    this.ticketService.getRelevantTicketsWithFilters(
+      { ...this.filters, page: this.currentPage - 1, size: this.pageSize }
+    ).subscribe({
+      next: (data) => {
+        this.tickets = data.content;
+        this.totalItems = data.totalElements;
+        this.totalPages = data.totalPages;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Failed to load tickets';
+        this.loading = false;
+      }
+    });
+  }
+  
   addFilter(filterId: string): void {
     if (!this.activeFilters.includes(filterId)) {
       this.activeFilters.push(filterId);
@@ -162,12 +204,16 @@ export class TicketListComponent implements OnInit {
   }
 
   applyFiltersAndOptions(): void {
-    this.loadTickets();
-
+    if (this.authService.isAdmin()) {
+      this.loadTickets();
+    } else {
+      this.loadRelevantTickets();
+    }
+  
     this.showDescription = this.pendingShowDescription;
     this.selectedColumns = [...this.pendingSelectedColumns];
     this.groupBy = this.pendingGroupBy;
-
+  
     localStorage.setItem('selectedColumns', JSON.stringify(this.selectedColumns));
     localStorage.setItem('groupBy', this.groupBy);
   }
@@ -218,7 +264,6 @@ export class TicketListComponent implements OnInit {
       groupedTickets[groupValue].push(ticket);
     }
 
-    // Convert to array format for the template
     const result: any[] = [];
     for (const group in groupedTickets) {
       result.push({
@@ -255,16 +300,35 @@ export class TicketListComponent implements OnInit {
   }
 
   loadEmployees(): void {
-    this.employeeService.getAllEmployees(0, 10).subscribe({
-      next: (data) => {
-        this.employees = data.content;
-      },
-      error: (err) => {
-        this.error = 'Failed to load employees';
-      }
-    });
+    if (this.authService.isAdmin()) {
+      this.employeeService.getAllEmployees(0, 10).subscribe({
+        next: (data) => {
+          this.employees = data.content;
+        },
+        error: (err) => {
+          this.error = 'Failed to load employees';
+        }
+      });
+    } else {
+      this.employeeService.getProfile().subscribe({
+        next: (profile) => {
+          const uniqueEmployees: Employee[] = [profile];
+          
+          this.tickets.forEach(ticket => {
+            if (ticket.assignee && !uniqueEmployees.some(e => e.id === ticket.assignee?.id)) {
+              uniqueEmployees.push(ticket.assignee);
+            }
+          });
+          
+          this.employees = uniqueEmployees;
+        },
+        error: (err) => {
+          this.error = 'Failed to load employee profile';
+        }
+      });
+    }
   }
-
+  
   openCreateTicketModal(): void {
     this.isEditing = false;
     this.newTicket = this.getEmptyTicket();
@@ -360,12 +424,20 @@ export class TicketListComponent implements OnInit {
 
   onPageChange(page: number): void {
     this.currentPage = page;
-    this.loadTickets();
+    if (this.authService.isAdmin()) {
+      this.loadTickets();
+    } else {
+      this.loadRelevantTickets();
+    }
   }
-
+  
   onItemsPerPageChange(itemsPerPage: number): void {
     this.pageSize = itemsPerPage;
-    this.loadTickets();
+    if (this.authService.isAdmin()) {
+      this.loadTickets();
+    } else {
+      this.loadRelevantTickets();
+    }
   }
 
   private getEmptyTicket(): Ticket {
