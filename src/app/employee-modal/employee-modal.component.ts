@@ -31,6 +31,15 @@ export class EmployeeModalComponent {
   @Input() selectedRoleId: number | null = null;
   @Output() saveEmployee = new EventEmitter<{form: NgForm, selectedRoleId: number | null }>();
 
+  passwordEditEnabled: boolean = false;
+
+  togglePasswordEdit(): void {
+    this.passwordEditEnabled = !this.passwordEditEnabled;
+    if (this.passwordEditEnabled) {
+      this.newEmployee.password = '';
+    }
+  }
+  
   onSave(form: NgForm): void {
     if (!form.valid) {
       return;

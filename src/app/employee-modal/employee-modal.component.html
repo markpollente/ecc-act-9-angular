@@ -36,10 +36,22 @@
           </div>
           <div class="row mb-3">
             <label for="password" class="col-sm-2 col-form-label">Password:</label>
-            <div class="col-sm-10">
-              <input type="password" id="password" name="password" [(ngModel)]="newEmployee.password" class="form-control" required>
+            <div class="col-sm-10 d-flex">
+              <input type="password" 
+                     id="password" 
+                     name="password" 
+                     [(ngModel)]="newEmployee.password" 
+                     class="form-control" 
+                     [required]="!isEditing || passwordEditEnabled"
+                     [disabled]="isEditing && !passwordEditEnabled">
+              <button *ngIf="isEditing" 
+                      type="button" 
+                      class="btn btn-outline-secondary ms-2" 
+                      (click)="togglePasswordEdit()">
+                {{ passwordEditEnabled ? 'Cancel' : 'Change' }}
+              </button>
             </div>
-            <div *ngIf="employeeForm.submitted && !employeeForm.controls['password'].valid" class="error">
+            <div *ngIf="employeeForm.submitted && !employeeForm.controls['password'].valid && (!isEditing || passwordEditEnabled)" class="error">
               Password is required
             </div>
           </div>
