@@ -4,13 +4,14 @@ import { RouterModule } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 
 import { Ticket } from '@models/ticket.model';
-import { Employee } from '@models/employee.model';
+import { EmployeeRef } from '@models/employeeRef.model';
 
 import { TicketService } from '@services/ticket.service';
 import { EmployeeService } from '@services/employee.service';
 import { TicketModalComponent } from 'app/ticket-modal/ticket-modal.component';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { AuthService } from '@core/services/auth.service';
+
 
 interface Filters {
   ticketNo: string;
@@ -34,7 +35,7 @@ interface Filters {
 })
 export class TicketListComponent implements OnInit {
   tickets: Ticket[] = [];
-  employees: Employee[] = [];
+  employees: EmployeeRef[] = [];
   ticketStatuses: string[] = ['FILED', 'DRAFT', 'INPROGRESS', 'DUPLICATE', 'CLOSED'];
   filters: Filters = this.getEmptyFilters();
   newTicket: Ticket = this.getEmptyTicket();
@@ -104,7 +105,7 @@ export class TicketListComponent implements OnInit {
   }
 
   applyRoleBasedFilters(): void {
-    this.loadEmployeeDirectory();
+    this.loadEmployeeReferences();
     
     if (this.authService.isAdmin()) {
       this.loadTickets();
@@ -113,13 +114,13 @@ export class TicketListComponent implements OnInit {
     }
   }
 
-  loadEmployeeDirectory(): void {
-    this.employeeService.getEmployeeDirectory(0, 100).subscribe({
-      next: (data) => {
-        this.employees = data.content;
+  loadEmployeeReferences(): void {
+    this.employeeService.getEmployeeReferences().subscribe({
+      next: (employees) => {
+        this.employees = employees;
       },
       error: (err) => {
-        this.error = 'Failed to load employee directory';
+        this.error = 'Failed to load employee list';
       }
     });
   }
@@ -247,8 +248,10 @@ export class TicketListComponent implements OnInit {
       if (this.groupBy === 'status') {
         groupValue = ticket.status || 'No status';
       } else if (this.groupBy === 'assignee') {
-        groupValue = ticket.assignee ?
-        `${ticket.assignee.firstName} ${ticket.assignee.lastName}` : 'Unassigned';
+        const assignee = ticket.assignee ? 
+          this.employees.find(e => ticket.assignee && e.id === ticket.assignee.id) : null;
+        
+        groupValue = assignee ? assignee.fullName : 'Unassigned';
       } else if (this.groupBy === 'createdBy') {
         groupValue = ticket.createdBy || 'Unknown';
       } else if (this.groupBy === 'updatedBy') {
@@ -298,36 +301,6 @@ export class TicketListComponent implements OnInit {
       }
     });
   }
-
-  loadEmployees(): void {
-    if (this.authService.isAdmin()) {
-      this.employeeService.getAllEmployees(0, 10).subscribe({
-        next: (data) => {
-          this.employees = data.content;
-        },
-        error: (err) => {
-          this.error = 'Failed to load employees';
-        }
-      });
-    } else {
-      this.employeeService.getProfile().subscribe({
-        next: (profile) => {
-          const uniqueEmployees: Employee[] = [profile];
-          
-          this.tickets.forEach(ticket => {
-            if (ticket.assignee && !uniqueEmployees.some(e => e.id === ticket.assignee?.id)) {
-              uniqueEmployees.push(ticket.assignee);
-            }
-          });
-          
-          this.employees = uniqueEmployees;
-        },
-        error: (err) => {
-          this.error = 'Failed to load employee profile';
-        }
-      });
-    }
-  }
   
   openCreateTicketModal(): void {
     this.isEditing = false;
@@ -373,7 +346,6 @@ export class TicketListComponent implements OnInit {
           if (index !== -1) {
             this.tickets[index] = updatedTicket;
           }
-          console.log(selectedEmployeeId);
           if (this.editingTicketId !== null && this.editingTicketId !== undefined) {
             this.assignTicketToEmployee(this.editingTicketId);
           }

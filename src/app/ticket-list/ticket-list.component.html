@@ -61,9 +61,9 @@
                 <div class="d-flex flex-grow-1">
                   <select class="form-select" [(ngModel)]="filters.assignee">
                     <option value="">All</option>
-                    <option [ngValue]="null">Unassigned</option>
-                    <option *ngFor="let employee of employees" [ngValue]="employee.id">
-                      {{ employee.firstName }} {{ employee.lastName }}
+                    <option value="null">Unassigned</option>
+                    <option *ngFor="let employee of employees" [value]="employee.fullName">
+                      {{ employee.fullName }}
                     </option>
                   </select>
                   <button class="btn btn-sm btn-outline-secondary ms-2" title="Remove filter"

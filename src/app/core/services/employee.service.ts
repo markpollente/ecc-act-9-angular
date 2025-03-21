@@ -5,6 +5,7 @@ import { environment } from '@env/environment';
 import { Employee } from '@models/employee.model';
 import { Page } from '@models/page';
 import { Ticket } from '@models/ticket.model';
+import { EmployeeRef } from '@shared/models/employeeRef.model';
 
 @Injectable({
   providedIn: 'root'
@@ -60,7 +61,7 @@ export class EmployeeService {
     return this.http.get<Ticket[]>(`${this.apiUrl}/profile/assigned`);
   }
 
-  getEmployeeDirectory(page: number = 0, size: number = 100): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/directory?page=${page}&size=${size}`);
+  getEmployeeReferences(): Observable<EmployeeRef[]> {
+    return this.http.get<EmployeeRef[]>(`${this.apiUrl}/references`);
   }
 }

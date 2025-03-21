@@ -2,8 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 
-import { Employee } from '@models/employee.model';
 import { Ticket } from '@models/ticket.model';
+import { EmployeeRef } from '@models/employeeRef.model';
 
 @Component({
   selector: 'app-ticket-modal',
@@ -24,7 +24,7 @@ export class TicketModalComponent {
     createdBy: '',
     updatedBy: ''
   };
-  @Input() employees: Employee[] = [];
+  @Input() employees: EmployeeRef[] = [];
   @Input() selectedEmployeeId: number | null = null;
   @Output() saveTicket = new EventEmitter<{form: NgForm, selectedEmployeeId: number | null }>();
 
