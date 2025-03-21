@@ -18,6 +18,9 @@ export class RoleModalComponent {
   @Output() saveRole = new EventEmitter<NgForm>();
 
   onSave(form: NgForm): void {
+    if (!form.valid) {
+      return;
+    }
     this.saveRole.emit(form);
   }
 

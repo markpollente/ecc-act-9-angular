@@ -25,7 +25,7 @@
               Description is required
             </div>
           </div>
-          <button type="submit" class="btn btn-primary">{{ isEditing ? 'Update Role' : 'Create Role' }}</button>
+          <button type="submit" class="btn btn-primary" [attr.data-bs-dismiss]="roleForm.valid ? 'modal' : null">{{ isEditing ? 'Update Role' : 'Create Role' }}</button>
         </form>
       </div>
     </div>
