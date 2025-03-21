@@ -1,3 +1,210 @@
-<div class="container">
-  <h1>Dashboard</h1>
+<div class="container mb-3">
+  <h2 class="my-4">Dashboard</h2>
+
+  <div *ngIf="loading" class="d-flex justify-content-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <!-- Personal tickets section -->
+  <div *ngIf="!loading && !error">
+    <h3 class="mb-3">My Tickets</h3>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- My Assigned Tickets -->
+      <div class="col">
+        <div class="card h-100 border-info">
+          <div class="card-header bg-info text-white">
+            <h5 class="card-title mb-0">My Assigned Tickets</h5>
+          </div>
+          <div class="card-body text-center">
+            <h1 class="display-4">{{ getTotalPersonalAssigned() }}</h1>
+            <p class="card-text">Tickets assigned to you</p>
+            <a [routerLink]="['/tickets/assigned']" class="btn btn-outline-info">View Assignments</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Filed Tickets -->
+      <div class="col">
+        <div class="card h-100 border-primary">
+          <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">My Filed Tickets</h5>
+          </div>
+          <div class="card-body text-center">
+            <h1 class="display-4">{{ getTotalPersonalCreated() }}</h1>
+            <p class="card-text">Tickets you created</p>
+            <a [routerLink]="['/tickets/filed']" class="btn btn-outline-primary">View Filed</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- My Completed Tickets -->
+      <div class="col">
+        <div class="card h-100 border-success">
+          <div class="card-header bg-success text-white">
+            <h5 class="card-title mb-0">My Completed Tickets</h5>
+          </div>
+          <div class="card-body text-center">
+            <h1 class="display-4">{{ personalCounts['ASSIGNED_CLOSED'] || 0 }}</h1>
+            <p class="card-text">Tickets you've completed</p>
+            <a [routerLink]="['/tickets/assigned']" [queryParams]="{status: 'CLOSED'}"
+              class="btn btn-outline-success">View Completed</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detailed personal stats -->
+    <div class="row mt-4">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">My Ticket Details</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <h6>Assigned to Me</h6>
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                  <span>Draft:</span>
+                  <span class="badge bg-secondary">{{ personalCounts['ASSIGNED_DRAFT'] || 0 }}</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                  <span>Filed:</span>
+                  <span class="badge bg-primary">{{ personalCounts['ASSIGNED_FILED'] || 0 }}</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                  <span>In Progress:</span>
+                  <span class="badge bg-warning">{{ personalCounts['ASSIGNED_INPROGRESS'] || 0 }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>Closed:</span>
+                  <span class="badge bg-success">{{ personalCounts['ASSIGNED_CLOSED'] || 0 }}</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <h6>Created by Me</h6>
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                  <span>Draft:</span>
+                  <span class="badge bg-secondary">{{ personalCounts['CREATED_DRAFT'] || 0 }}</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                  <span>Filed:</span>
+                  <span class="badge bg-primary">{{ personalCounts['CREATED_FILED'] || 0 }}</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                  <span>In Progress:</span>
+                  <span class="badge bg-warning">{{ personalCounts['CREATED_INPROGRESS'] || 0 }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>Closed:</span>
+                  <span class="badge bg-success">{{ personalCounts['CREATED_CLOSED'] || 0 }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin-only overall statistics section -->
+  <div *ngIf="!loading && !error && isAdmin" class="mt-5">
+    <h3 class="mb-3">Overall System Statistics</h3>
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <!-- Open Tickets Card -->
+      <div class="col">
+        <div class="card h-100 border-primary">
+          <div class="card-header bg-primary text-white">
+            <h5 class="card-title mb-0">Open Tickets</h5>
+          </div>
+          <div class="card-body text-center">
+            <h1 class="display-4">{{ ticketCounts['FILED'] || 0 }}</h1>
+            <p class="card-text">Tickets awaiting assignment</p>
+            <a [routerLink]="['/tickets']" [queryParams]="{status: 'FILED'}" class="btn btn-outline-primary">View All
+              Open</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- In Progress Tickets Card -->
+      <div class="col">
+        <div class="card h-100 border-warning">
+          <div class="card-header bg-warning text-dark">
+            <h5 class="card-title mb-0">In Progress Tickets</h5>
+          </div>
+          <div class="card-body text-center">
+            <h1 class="display-4">{{ ticketCounts['INPROGRESS'] || 0 }}</h1>
+            <p class="card-text">Tickets currently being worked on</p>
+            <a [routerLink]="['/tickets']" [queryParams]="{status: 'INPROGRESS'}" class="btn btn-outline-warning">View
+              All In Progress</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Closed Tickets Card -->
+      <div class="col">
+        <div class="card h-100 border-success">
+          <div class="card-header bg-success text-white">
+            <h5 class="card-title mb-0">Closed Tickets</h5>
+          </div>
+          <div class="card-body text-center">
+            <h1 class="display-4">{{ ticketCounts['CLOSED'] || 0 }}</h1>
+            <p class="card-text">Tickets resolved and closed</p>
+            <a [routerLink]="['/tickets']" [queryParams]="{status: 'CLOSED'}" class="btn btn-outline-success">View All
+              Closed</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row mt-4" *ngIf="!loading && !error">
+      <div class="col-12">
+        <div class="card">
+          <div class="card-header">
+            <h5 class="card-title mb-0">Additional Statistics</h5>
+          </div>
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                  <span>Draft Tickets:</span>
+                  <span class="badge bg-secondary">{{ ticketCounts['DRAFT'] || 0 }}</span>
+                </div>
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                  <span>Duplicate Tickets:</span>
+                  <span class="badge bg-danger">{{ ticketCounts['DUPLICATE'] || 0 }}</span>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex justify-content-between border-bottom pb-2 mb-2">
+                  <span>Total Active Tickets:</span>
+                  <span class="badge bg-primary">{{
+                    (ticketCounts['FILED'] || 0) +
+                    (ticketCounts['INPROGRESS'] || 0) +
+                    (ticketCounts['DRAFT'] || 0)
+                    }}</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span>Total Tickets:</span>
+                  <span class="badge bg-dark">{{
+                    (ticketCounts['FILED'] || 0) +
+                    (ticketCounts['INPROGRESS'] || 0) +
+                    (ticketCounts['DRAFT'] || 0) +
+                    (ticketCounts['CLOSED'] || 0) +
+                    (ticketCounts['DUPLICATE'] || 0)
+                    }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

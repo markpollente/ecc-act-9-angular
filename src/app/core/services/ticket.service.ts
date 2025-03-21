@@ -64,4 +64,12 @@ export class TicketService {
 
     return this.http.put<Ticket>(`${this.apiUrl}/${ticketId}/remark`, null, { params });
   }
+
+  getTicketCountsByStatus(): Observable<{[key: string]: number}> {
+    return this.http.get<{[key: string]: number}>(`${this.apiUrl}/counts-by-status`);
+  }
+
+  getPersonalTicketCounts(): Observable<{[key: string]: number}> {
+    return this.http.get<{[key: string]: number}>(`${this.apiUrl}/profile/ticket-counts`);
+  }
 }

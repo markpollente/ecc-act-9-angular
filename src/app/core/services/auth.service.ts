@@ -41,11 +41,35 @@ export class AuthService {
   }
 
   isAdmin(): boolean {
+    return this.hasRole('ADMIN');
+  }
+
+  hasRole(role: string): boolean {
     const token = this.jwtService.getToken();
     if (token) {
       const decodedToken = JSON.parse(atob(token.split('.')[1]));
-      return decodedToken.roles && decodedToken.roles.includes('ROLE_ADMIN');
+      return decodedToken.roles && decodedToken.roles.includes(`ROLE_${role}`);
     }
     return false;
+  }
+
+  getUserRoles(): string[] {
+    const token = this.jwtService.getToken();
+    if (token) {
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      if (decodedToken.roles) {
+        return decodedToken.roles.map((role: string) => role.replace('ROLE_', ''));
+      }
+    }
+    return [];
+  }
+
+  getCurrentUserEmail(): string | null {
+    const token = this.jwtService.getToken();
+    if (token) {
+      const decodedToken = JSON.parse(atob(token.split('.')[1]));
+      return decodedToken.sub;
+    }
+    return null;
   }
 }
