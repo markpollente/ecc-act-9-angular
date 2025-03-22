@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { TicketService } from '@services/ticket.service';
 import { AuthService } from '@services/auth.service';
+import { forkJoin, of } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -24,38 +25,30 @@ export class DashboardComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadTicketCounts();
-    this.loadPersonalCounts();
+    this.isAdmin = this.authService.hasRole('ADMIN');
+    this.loadDashboardData();
   }
 
-  loadTicketCounts(): void {
-    if (!this.authService.isAdmin()) return;
+  loadDashboardData(): void {
+    this.loading = true;
     
-    this.loading = true;
-    this.ticketService.getTicketCountsByStatus().subscribe({
-      next: (counts) => {
-        this.ticketCounts = counts;
+    const adminCountsObservable = this.isAdmin ? 
+      this.ticketService.getTicketCountsByStatus() : 
+      of({});
+      
+    forkJoin({
+      adminCounts: adminCountsObservable,
+      personalCounts: this.ticketService.getPersonalTicketCounts()
+    }).subscribe({
+      next: (results) => {
+        this.ticketCounts = results.adminCounts;
+        this.personalCounts = results.personalCounts;
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Failed to load ticket statistics';
+        this.error = 'Failed to load dashboard statistics';
         this.loading = false;
-        console.error('Error loading ticket counts:', err);
-      }
-    });
-  }
-
-  loadPersonalCounts(): void {
-    this.loading = true;
-    this.ticketService.getPersonalTicketCounts().subscribe({
-      next: (counts) => {
-        this.personalCounts = counts;
-        this.loading = false;
-      },
-      error: (err) => {
-        this.error = 'Failed to load personal ticket statistics';
-        this.loading = false;
-        console.error('Error loading personal ticket counts:', err);
+        console.error('Error loading dashboard data:', err);
       }
     });
   }
