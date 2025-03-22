@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 
 import { Ticket } from '@models/ticket.model';
@@ -87,6 +87,7 @@ export class TicketListComponent implements OnInit {
     private ticketService: TicketService,
     private employeeService: EmployeeService,
     private authService: AuthService,
+    private route: ActivatedRoute
   ) { }
 
   ngOnInit(): void {
@@ -101,12 +102,50 @@ export class TicketListComponent implements OnInit {
     this.pendingShowDescription = this.showDescription;
     this.pendingSelectedColumns = [...this.selectedColumns];
 
-    this.applyRoleBasedFilters();
+    this.loadEmployeeReferences();
+    
+    this.route.queryParams.subscribe(params => {
+      if (params['status']) {
+        this.filters.status = params['status'];
+        if (!this.activeFilters.includes('status')) {
+          this.activeFilters.push('status');
+        }
+      }
+  
+      if (params['assignee'] === 'current') {
+        const currentUserId = this.employeeService.getProfile();
+        if (currentUserId) {
+          if (!this.activeFilters.includes('assignee')) {
+            this.activeFilters.push('assignee');
+          }
+          this.employeeService.getProfile().subscribe(profile => {
+            if (profile) {
+              this.filters.assignee = profile.firstName + ' ' + profile.lastName;
+            }
+          });
+        }
+      }
+  
+      if (params['createdBy'] === 'current') {
+        if (!this.activeFilters.includes('createdBy')) {
+          this.activeFilters.push('createdBy');
+        }
+        this.employeeService.getProfile().subscribe(profile => {
+          if (profile) {
+            this.filters.createdBy = profile.firstName + ' ' + profile.lastName;
+          }
+        });        
+      }
+  
+      if (Object.keys(params).length > 0) {
+        this.applyFiltersAndOptions();
+      } else {
+        this.applyRoleBasedFilters();
+      }
+    });
   }
 
   applyRoleBasedFilters(): void {
-    this.loadEmployeeReferences();
-    
     if (this.authService.isAdmin()) {
       this.loadTickets();
     } else {

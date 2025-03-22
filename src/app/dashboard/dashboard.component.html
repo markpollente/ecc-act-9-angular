@@ -24,7 +24,7 @@
           <div class="card-body text-center">
             <h1 class="display-4">{{ getTotalPersonalAssigned() }}</h1>
             <p class="card-text">Tickets assigned to you</p>
-            <a [routerLink]="['/tickets/assigned']" class="btn btn-outline-info">View Assignments</a>
+            <a [routerLink]="['/tickets']" [queryParams]="{assignee: 'current'}" class="btn btn-outline-info">View Assignments</a>
           </div>
         </div>
       </div>
@@ -38,7 +38,7 @@
           <div class="card-body text-center">
             <h1 class="display-4">{{ getTotalPersonalCreated() }}</h1>
             <p class="card-text">Tickets you created</p>
-            <a [routerLink]="['/tickets/filed']" class="btn btn-outline-primary">View Filed</a>
+            <a [routerLink]="['/tickets']" [queryParams]="{createdBy: 'current'}" class="btn btn-outline-primary">View Filed</a>
           </div>
         </div>
       </div>
@@ -52,8 +52,7 @@
           <div class="card-body text-center">
             <h1 class="display-4">{{ personalCounts['ASSIGNED_CLOSED'] || 0 }}</h1>
             <p class="card-text">Tickets you've completed</p>
-            <a [routerLink]="['/tickets/assigned']" [queryParams]="{status: 'CLOSED'}"
-              class="btn btn-outline-success">View Completed</a>
+            <a [routerLink]="['/tickets']" [queryParams]="{assignee: 'current', status: 'CLOSED'}" class="btn btn-outline-success">View Completed</a>
           </div>
         </div>
       </div>
