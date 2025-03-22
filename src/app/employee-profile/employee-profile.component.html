@@ -1,27 +1,190 @@
-<div class="container">
-  <h2>Profile</h2>
-  <div *ngIf="profile">
-    <p><strong>Name:</strong> {{ profile.firstName }} {{ profile.lastName }}</p>
-    <p><strong>Email:</strong> {{ profile.email }}</p>
-    <p><strong>Birthday:</strong> {{ profile.birthday }}</p>
-    <p><strong>Address:</strong> {{ profile.address }}</p>
-    <p><strong>Contact Number:</strong> {{ profile.contactNumber }}</p>
-    <p><strong>Employment Status:</strong> {{ profile.employmentStatus }}</p>
+<div class="container mt-4">
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header">
+          <h5 class="mb-0">My Profile</h5>
+        </div>
+        <div class="card-body">
+          <div *ngIf="loading.profile" class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <div *ngIf="error.profile" class="alert alert-danger">
+            {{ error.profile }}
+          </div>
+          
+          <!-- Profile data -->
+          <div *ngIf="!loading.profile && !error.profile && profile">
+            <div class="row">
+              <div class="col-md-6">
+                <div class="mb-3 row">
+                  <label class="col-sm-4 col-form-label fw-bold">Name:</label>
+                  <div class="col-sm-8">
+                    {{ profile.firstName }} {{ profile.lastName }}
+                  </div>
+                </div>
+                <div class="mb-3 row">
+                  <label class="col-sm-4 col-form-label fw-bold">Email:</label>
+                  <div class="col-sm-8">
+                    {{ profile.email }}
+                  </div>
+                </div>
+                <div class="mb-3 row">
+                  <label class="col-sm-4 col-form-label fw-bold">Age:</label>
+                  <div class="col-sm-8">
+                    {{ profile.age }}
+                  </div>
+                </div>
+                <div class="mb-3 row">
+                  <label class="col-sm-4 col-form-label fw-bold">Employement Status:</label>
+                  <div class="col-sm-8">
+                    {{ profile.employementStatus }}
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="mb-3 row">
+                  <label class="col-sm-4 col-form-label fw-bold">Birthday:</label>
+                  <div class="col-sm-8">
+                    {{ profile.birthday }}
+                  </div>
+                </div>
+                <div class="mb-3 row">
+                  <label class="col-sm-4 col-form-label fw-bold">Address:</label>
+                  <div class="col-sm-8">
+                    {{ profile.address }}
+                  </div>
+                </div>
+                <div class="mb-3 row">
+                  <label class="col-sm-4 col-form-label fw-bold">Contact No.:</label>
+                  <div class="col-sm-8">
+                    {{ profile.contactNumber }}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
-
-  <h3>Filed Tickets</h3>
-  <div *ngIf="filedTickets.length === 0">No filed tickets</div>
-  <ul *ngIf="filedTickets.length > 0">
-    <li *ngFor="let ticket of filedTickets">
-      <a [routerLink]="['/tickets', ticket.id]">{{ ticket.title }}</a> - {{ ticket.status }}
-    </li>
-  </ul>
-
-  <h3>Assigned Tickets</h3>
-  <div *ngIf="assignedTickets.length === 0">No assigned tickets</div>
-  <ul *ngIf="assignedTickets.length > 0">
-    <li *ngFor="let ticket of assignedTickets">
-      <a [routerLink]="['/tickets', ticket.id]">{{ ticket.title }}</a> - {{ ticket.status }}
-    </li>
-  </ul>
+  
+  <!-- Filed Tickets Section -->
+  <div class="row mb-4">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">My Filed Tickets</h5>
+        </div>
+        <div class="card-body">
+          <!-- Loading state -->
+          <div *ngIf="loading.filed" class="d-flex justify-content-center">
+            <div class="spinner-border text-primary" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Error state -->
+          <div *ngIf="error.filed" class="alert alert-danger">
+            {{ error.filed }}
+          </div>
+          
+          <!-- No tickets message -->
+          <div *ngIf="!loading.filed && !error.filed && filedTickets.length === 0" class="alert alert-info">
+            You haven't filed any tickets yet.
+          </div>
+          
+          <!-- Tickets table -->
+          <div *ngIf="!loading.filed && !error.filed && filedTickets.length > 0" class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Ticket No</th>
+                  <th>Title</th>
+                  <th>Status</th>
+                  <th>Assignee</th>
+                  <th>Created Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ticket of filedTickets">
+                  <td>
+                    <a [routerLink]="['/tickets', ticket.id]">{{ ticket.ticketNo }}</a>
+                  </td>
+                  <td>{{ ticket.title }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusBadgeClass(ticket.status)">{{ ticket.status }}</span>
+                  </td>
+                  <td>
+                    {{ ticket.assignee ? (ticket.assignee.firstName + ' ' + ticket.assignee.lastName) : 'Unassigned' }}
+                  </td>
+                  <td>{{ ticket.createdDate | date:'medium' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Assigned Tickets Section -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card">
+        <div class="card-header bg-info text-white">
+          <h5 class="mb-0">Tickets Assigned to Me</h5>
+        </div>
+        <div class="card-body">
+          <!-- Loading state -->
+          <div *ngIf="loading.assigned" class="d-flex justify-content-center">
+            <div class="spinner-border text-info" role="status">
+              <span class="visually-hidden">Loading...</span>
+            </div>
+          </div>
+          
+          <!-- Error state -->
+          <div *ngIf="error.assigned" class="alert alert-danger">
+            {{ error.assigned }}
+          </div>
+          
+          <!-- No tickets message -->
+          <div *ngIf="!loading.assigned && !error.assigned && assignedTickets.length === 0" class="alert alert-info">
+            No tickets are currently assigned to you.
+          </div>
+          
+          <!-- Tickets table -->
+          <div *ngIf="!loading.assigned && !error.assigned && assignedTickets.length > 0" class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Ticket No</th>
+                  <th>Title</th>
+                  <th>Status</th>
+                  <th>Created By</th>
+                  <th>Updated Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let ticket of assignedTickets">
+                  <td>
+                    <a [routerLink]="['/tickets', ticket.id]">{{ ticket.ticketNo }}</a>
+                  </td>
+                  <td>{{ ticket.title }}</td>
+                  <td>
+                    <span class="badge" [ngClass]="getStatusBadgeClass(ticket.status)">{{ ticket.status }}</span>
+                  </td>
+                  <td>{{ ticket.createdBy }}</td>
+                  <td>{{ ticket.updatedDate | date:'medium' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
