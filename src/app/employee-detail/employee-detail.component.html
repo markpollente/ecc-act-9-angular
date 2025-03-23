@@ -1,0 +1,139 @@
+<div class="container mt-4">
+  <div *ngIf="loading" class="d-flex justify-content-center">
+    <div class="spinner-border" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <div *ngIf="!loading && !error && employee" class="card">
+    <div class="card-header d-flex justify-content-between align-items-center bg-light">
+      <h4 class="mb-0">Employee Details</h4>
+      <div>
+        <button class="btn btn-outline-secondary me-2" (click)="goBack()">
+          <i class="bi bi-arrow-left"></i> Back
+        </button>
+        <ng-container *ngIf="!isEditing && canEditEmployee()">
+            <button class="btn btn-primary me-2" (click)="toggleEdit()">
+              <i class="bi bi-pencil"></i> Edit
+            </button>
+            <button class="btn btn-danger" (click)="deleteEmployee()">
+              <i class="bi bi-trash"></i> Delete
+            </button>
+          </ng-container>
+          
+          <ng-container *ngIf="isEditing && canEditEmployee()">
+            <button class="btn btn-success me-2" (click)="saveChanges()">
+              <i class="bi bi-check"></i> Save
+            </button>
+            <button class="btn btn-secondary" (click)="toggleEdit()">
+              <i class="bi bi-x"></i> Cancel
+            </button>
+          </ng-container>
+      </div>
+    </div>
+
+    <div class="card-body">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label fw-bold">First Name:</label>
+            <div class="col-sm-8">
+              <span *ngIf="!isEditing">{{ employee.firstName }}</span>
+              <input *ngIf="isEditing" type="text" class="form-control" [(ngModel)]="editFormData.firstName">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label fw-bold">Last Name:</label>
+            <div class="col-sm-8">
+              <span *ngIf="!isEditing">{{ employee.lastName }}</span>
+              <input *ngIf="isEditing" type="text" class="form-control" [(ngModel)]="editFormData.lastName">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label fw-bold">Email:</label>
+            <div class="col-sm-8">
+              <span *ngIf="!isEditing">{{ employee.email }}</span>
+              <input *ngIf="isEditing" type="email" class="form-control" [(ngModel)]="editFormData.email">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label fw-bold">Role:</label>
+            <div class="col-sm-8">
+              <span *ngIf="!isEditing">{{ getRoleName(employee) }}</span>
+              <select *ngIf="isEditing" class="form-select" [(ngModel)]="editFormData.selectedRoleId">
+                <option [ngValue]="null">No Role</option>
+                <option *ngFor="let role of roles" [ngValue]="role.id">{{ role.name }}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label fw-bold">Birthday:</label>
+            <div class="col-sm-8">
+              <span *ngIf="!isEditing">{{ employee.birthday }}</span>
+              <input *ngIf="isEditing" type="date" class="form-control" [(ngModel)]="editFormData.birthday">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label fw-bold">Address:</label>
+            <div class="col-sm-8">
+              <span *ngIf="!isEditing">{{ employee.address }}</span>
+              <input *ngIf="isEditing" type="text" class="form-control" [(ngModel)]="editFormData.address">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label fw-bold">Contact Number:</label>
+            <div class="col-sm-8">
+              <span *ngIf="!isEditing">{{ employee.contactNumber }}</span>
+              <input *ngIf="isEditing" type="text" class="form-control" [(ngModel)]="editFormData.contactNumber">
+            </div>
+          </div>
+          <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label fw-bold">Employment Status:</label>
+            <div class="col-sm-8">
+              <span *ngIf="!isEditing">{{ employee.employmentStatus }}</span>
+              <input *ngIf="isEditing" type="text" class="form-control" [(ngModel)]="editFormData.employmentStatus">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password section -->
+      <div *ngIf="isEditing" class="mb-3 row">
+        <label class="col-sm-2 col-form-label fw-bold">Password:</label>
+        <div class="col-sm-10 d-flex">
+          <input type="password" class="form-control" 
+                 [disabled]="!passwordEditEnabled"
+                 [(ngModel)]="editFormData.password">
+          <button type="button" class="btn btn-outline-secondary ms-2" 
+                  (click)="togglePasswordEdit()">
+            {{ passwordEditEnabled ? 'Cancel' : 'Change Password' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Created/Updated Information -->
+      <div class="row mt-4">
+        <div class="col-md-6">
+          <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label fw-bold">Created:</label>
+            <div class="col-sm-8">
+              {{ employee.createdDate | date:'medium' }} by {{ employee.createdBy }}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="mb-3 row">
+            <label class="col-sm-4 col-form-label fw-bold">Updated:</label>
+            <div class="col-sm-8">
+              {{ employee.updatedDate | date:'medium' }} by {{ employee.updatedBy }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

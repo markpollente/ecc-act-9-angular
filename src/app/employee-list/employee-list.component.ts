@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule, NgForm } from '@angular/forms';
 
 import { AuthService } from '@services/auth.service';
@@ -33,7 +33,7 @@ interface Filters {
 
 @Component({
   selector: 'app-employee-list',
-  imports: [CommonModule, FormsModule, EmployeeModalComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, EmployeeModalComponent, PaginationComponent, RouterModule],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss']
 })
