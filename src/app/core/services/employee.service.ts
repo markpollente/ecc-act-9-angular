@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { environment } from '@env/environment';
 import { Employee } from '@models/employee.model';
 import { Page } from '@models/page';
@@ -63,5 +63,15 @@ export class EmployeeService {
 
   getEmployeeReferences(): Observable<EmployeeRef[]> {
     return this.http.get<EmployeeRef[]>(`${this.apiUrl}/references`);
+  }
+
+  updateCurrentUserProfile(profileData: Partial<Employee>): Observable<{employee: Employee, emailChanged: boolean, message?: string}> {
+    return this.http.put<{employee: Employee, emailChanged: boolean, message?: string}>(`${this.apiUrl}/profile`, profileData)
+      .pipe(
+        catchError(error => {
+          console.error('Error updating profile', error);
+          return throwError(() => new Error('Failed to update profile'));
+        })
+      );
   }
 }
