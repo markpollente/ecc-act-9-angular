@@ -9,13 +9,11 @@ export class JwtService {
   constructor() { }
 
   setToken(token: string): void {
-    console.log('Setting token:', token);
     localStorage.setItem(this.TOKEN_KEY, token);
   }
 
   getToken(): string | null {
-    const token = localStorage.getItem(this.TOKEN_KEY);
-    return token;
+    return localStorage.getItem(this.TOKEN_KEY);
   }
 
   removeToken(): void {
