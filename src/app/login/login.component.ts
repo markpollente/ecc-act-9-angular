@@ -1,13 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { NgModel, FormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-login',
-  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']
@@ -19,17 +18,18 @@ export class LoginComponent {
   constructor(private authService: AuthService, private router: Router) {}
 
   login() {
-    this.authService.login(this.email, this.password).subscribe(
-      success => {
+    this.authService.login(this.email, this.password).subscribe({
+      next: (success) => {
         if (success) {
           this.router.navigate(['/']);
         } else {
           alert('Login failed');
         }
       },
-      error => {
+      error: (err) => {
+        console.error('Login error:', err);
         alert('Login failed');
       }
-    );
+    });
   }
 }
