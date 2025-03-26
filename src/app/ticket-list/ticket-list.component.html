@@ -269,9 +269,9 @@
                       {{ ticket.assignee ? (ticket.assignee.firstName + ' ' + ticket.assignee.lastName) : 'Unassigned'
                       }}
                     </td>
-                    <td *ngIf="columnId === 'createdDate'">{{ ticket.createdDate }}</td>
+                    <td *ngIf="columnId === 'createdDate'">{{ ticket.createdDate | date:'yyyy-MM-dd HH:mm' }}</td>
                     <td *ngIf="columnId === 'createdBy'">{{ ticket.createdBy }}</td>
-                    <td *ngIf="columnId === 'updatedDate'">{{ ticket.updatedDate }}</td>
+                    <td *ngIf="columnId === 'updatedDate'">{{ ticket.updatedDate | date:'yyyy-MM-dd HH:mm' }}</td>
                     <td *ngIf="columnId === 'updatedBy'">{{ ticket.updatedBy }}</td>
                   </ng-container>
                   <td>
@@ -314,9 +314,9 @@
                 <td *ngIf="columnId === 'assignee'">
                   {{ ticket.assignee ? (ticket.assignee.firstName + ' ' + ticket.assignee.lastName) : 'Unassigned' }}
                 </td>
-                <td *ngIf="columnId === 'createdDate'">{{ ticket.createdDate }}</td>
+                <td *ngIf="columnId === 'createdDate'">{{ ticket.createdDate | date:'yyyy-MM-dd HH:mm' }}</td>
                 <td *ngIf="columnId === 'createdBy'">{{ ticket.createdBy }}</td>
-                <td *ngIf="columnId === 'updatedDate'">{{ ticket.updatedDate }}</td>
+                <td *ngIf="columnId === 'updatedDate'">{{ ticket.updatedDate | date:'yyyy-MM-dd HH:mm' }}</td>
                 <td *ngIf="columnId === 'updatedBy'">{{ ticket.updatedBy }}</td>
               </ng-container>
               <td>

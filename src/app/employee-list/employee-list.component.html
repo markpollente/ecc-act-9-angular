@@ -137,9 +137,9 @@
           <td>{{ employee.contactNumber }}</td>
           <td>{{ employee.employmentStatus }}</td>
           <td>{{ getRoles(employee) }}</td>
-          <td>{{ employee.createdDate }}</td>
+          <td>{{ employee.createdDate | date:'yyyy-MM-dd HH:mm'}}</td>
           <td>{{ employee.createdBy}}</td>
-          <td>{{ employee.updatedDate }}</td>
+          <td>{{ employee.updatedDate | date:'yyyy-MM-dd HH:mm'}}</td>
           <td>{{ employee.updatedBy }}</td>
           <td>
             <div class="btn-group" role="group">
