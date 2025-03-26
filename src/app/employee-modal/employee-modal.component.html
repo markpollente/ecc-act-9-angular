@@ -6,88 +6,92 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form (ngSubmit)="onSave(employeeForm)" #employeeForm="ngForm">
-          <div class="row mb-3">
-            <label for="firstName" class="col-sm-2 col-form-label">First Name:</label>
-            <div class="col-sm-10">
-              <input type="text" id="firstName" name="firstName" [(ngModel)]="newEmployee.firstName" class="form-control" required>
-            </div>
-            <div *ngIf="employeeForm.submitted && !employeeForm.controls['firstName'].valid" class="error">
+        <form (ngSubmit)="onSave(employeeForm)" #employeeForm="ngForm" class="row g-3 needs-validation" novalidate>
+          <div class="col-md-6">
+            <label for="firstName" class="form-label">First Name</label>
+            <input type="text" id="firstName" name="firstName" #firstNameInput="ngModel"
+              [(ngModel)]="newEmployee.firstName" class="form-control"
+              [class.is-invalid]="firstNameInput.invalid && (firstNameInput.touched || employeeForm.submitted)"
+              required>
+            <div class="invalid-feedback"
+              *ngIf="firstNameInput.invalid && (firstNameInput.touched || employeeForm.submitted)">
               First name is required
             </div>
           </div>
-          <div class="row mb-3">
-            <label for="lastName" class="col-sm-2 col-form-label">Last Name:</label>
-            <div class="col-sm-10">
-              <input type="text" id="lastName" name="lastName" [(ngModel)]="newEmployee.lastName" class="form-control" required>
-            </div>
-            <div *ngIf="employeeForm.submitted && !employeeForm.controls['lastName'].valid" class="error">
+
+          <div class="col-md-6">
+            <label for="lastName" class="form-label">Last Name</label>
+            <input type="text" id="lastName" name="lastName" #lastNameInput="ngModel" [(ngModel)]="newEmployee.lastName"
+              class="form-control"
+              [class.is-invalid]="lastNameInput.invalid && (lastNameInput.touched || employeeForm.submitted)" required>
+            <div class="invalid-feedback"
+              *ngIf="lastNameInput.invalid && (lastNameInput.touched || employeeForm.submitted)">
               Last name is required
             </div>
           </div>
-          <div class="row mb-3">
-            <label for="email" class="col-sm-2 col-form-label">Email:</label>
-            <div class="col-sm-10">
-              <input type="email" id="email" name="email" [(ngModel)]="newEmployee.email" class="form-control" required email>
-            </div>
-            <div *ngIf="employeeForm.submitted && !employeeForm.controls['email'].valid" class="error">
+
+          <div class="col-md-12">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" id="email" name="email" #emailInput="ngModel" [(ngModel)]="newEmployee.email"
+              class="form-control"
+              [class.is-invalid]="emailInput.invalid && (emailInput.touched || employeeForm.submitted)" required email>
+            <div class="invalid-feedback" *ngIf="emailInput.invalid && (emailInput.touched || employeeForm.submitted)">
               Valid email is required
             </div>
           </div>
-          <div class="row mb-3">
-            <label for="password" class="col-sm-2 col-form-label">Password:</label>
-            <div class="col-sm-10 d-flex">
-              <input type="password" 
-                     id="password" 
-                     name="password" 
-                     [(ngModel)]="newEmployee.password" 
-                     class="form-control" 
-                     [required]="!isEditing || passwordEditEnabled"
-                     [disabled]="isEditing && !passwordEditEnabled">
-              <button *ngIf="isEditing" 
-                      type="button" 
-                      class="btn btn-outline-secondary ms-2" 
-                      (click)="togglePasswordEdit()">
+
+          <div class="col-md-12">
+            <label for="password" class="form-label">Password</label>
+            <div [ngClass]=" { 'd-flex' : isEditing }">
+              <input type="password" id="password" name="password" #passwordInput="ngModel"
+                [(ngModel)]="newEmployee.password" class="form-control"
+                [class.is-invalid]="passwordInput.invalid && (passwordInput.touched || employeeForm.submitted) && (!isEditing || passwordEditEnabled)"
+                [required]="!isEditing || passwordEditEnabled" [disabled]="isEditing && !passwordEditEnabled">
+              <button *ngIf="isEditing" type="button" class="btn btn-outline-secondary ms-2"
+                (click)="togglePasswordEdit()">
                 {{ passwordEditEnabled ? 'Cancel' : 'Change' }}
               </button>
             </div>
-            <div *ngIf="employeeForm.submitted && !employeeForm.controls['password'].valid && (!isEditing || passwordEditEnabled)" class="error">
+
+            <div class="invalid-feedback"
+              *ngIf="passwordInput.invalid && (passwordInput.touched || employeeForm.submitted) && (!isEditing || passwordEditEnabled)">
               Password is required
             </div>
           </div>
-          <div class="row mb-3">
-            <label for="birthday" class="col-sm-2 col-form-label">Birthday:</label>
-            <div class="col-sm-10">
-              <input type="date" id="birthday" name="birthday" [(ngModel)]="newEmployee.birthday" class="form-control">
-            </div>
+
+          <div class="col-md-12">
+            <label for="address" class="form-label">Address</label>
+            <input type="text" id="address" name="address" [(ngModel)]="newEmployee.address" class="form-control">
           </div>
-          <div class="row mb-3">
-            <label for="address" class="col-sm-2 col-form-label">Address:</label>
-            <div class="col-sm-10">
-              <input type="text" id="address" name="address" [(ngModel)]="newEmployee.address" class="form-control">
-            </div>
+
+          <div class="col-md-6">
+            <label for="birthday" class="form-label">Birthday</label>
+            <input type="date" id="birthday" name="birthday" [(ngModel)]="newEmployee.birthday" class="form-control">
           </div>
-          <div class="row mb-3">
-            <label for="contactNumber" class="col-sm-2 col-form-label">Contact Number:</label>
-            <div class="col-sm-10">
-              <input type="text" id="contactNumber" name="contactNumber" [(ngModel)]="newEmployee.contactNumber" class="form-control">
-            </div>
+
+          <div class="col-md-6">
+            <label for="contactNumber" class="form-label">Contact Number</label>
+
+            <input type="text" id="contactNumber" name="contactNumber" [(ngModel)]="newEmployee.contactNumber"
+              class="form-control">
           </div>
-          <div class="row mb-3">
-            <label for="employmentStatus" class="col-sm-2 col-form-label">Employment Status:</label>
-            <div class="col-sm-10">
-              <input type="text" id="employmentStatus" name="employmentStatus" [(ngModel)]="newEmployee.employmentStatus" class="form-control">
-            </div>
+
+          <div class="col-md-6">
+            <label for="employmentStatus" class="form-label">Employment Status</label>
+            <input type="text" id="employmentStatus" name="employmentStatus" [(ngModel)]="newEmployee.employmentStatus"
+              class="form-control">
           </div>
-          <div class="row mb-3">
-            <label for="roles" class="col-sm-2 col-form-label">Roles:</label>
-            <div class="col-sm-10">
-              <select id="roles" name="roles" [(ngModel)]="selectedRoleId" class="form-select">
-                <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
-              </select>
-            </div>
+
+          <div class="col-md-6">
+            <label for="roles" class="form-label">Roles</label>
+            <select id="roles" name="roles" [(ngModel)]="selectedRoleId" class="form-select">
+              <option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</option>
+            </select>
           </div>
-          <button type="submit" class="btn btn-primary" [attr.data-bs-dismiss]="employeeForm.valid ? 'modal' : null">{{ isEditing ? 'Update Employee' : 'Create Employee' }}</button>
+
+          <button type="submit" class="btn btn-primary" [attr.data-bs-dismiss]="employeeForm.valid ? 'modal' : null">
+            {{ isEditing ? 'Update Employee' : 'Create Employee' }}
+          </button>
         </form>
       </div>
     </div>
