@@ -11,6 +11,7 @@ import { Employee } from '@models/employee.model';
 import { Role } from '@models/role.model';
 import { EmployeeModalComponent } from '../employee-modal/employee-modal.component';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
 
 interface Filters {
   id: string;
@@ -33,7 +34,13 @@ interface Filters {
 
 @Component({
   selector: 'app-employee-list',
-  imports: [CommonModule, FormsModule, EmployeeModalComponent, PaginationComponent, RouterModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    EmployeeModalComponent,
+    PaginationComponent,
+    RouterModule,
+    LoadingComponent],
   templateUrl: './employee-list.component.html',
   styleUrls: ['./employee-list.component.scss']
 })

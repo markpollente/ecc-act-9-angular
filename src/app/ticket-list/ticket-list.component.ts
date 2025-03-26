@@ -11,6 +11,7 @@ import { EmployeeService } from '@services/employee.service';
 import { TicketModalComponent } from 'app/ticket-modal/ticket-modal.component';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
 import { AuthService } from '@core/services/auth.service';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
 
 
 interface Filters {
@@ -28,8 +29,14 @@ interface Filters {
 
 @Component({
   selector: 'app-ticket-list',
-  standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, TicketModalComponent, PaginationComponent],
+  imports: [
+    CommonModule, 
+    RouterModule, 
+    FormsModule, 
+    TicketModalComponent, 
+    PaginationComponent,
+    LoadingComponent
+  ],
   templateUrl: './ticket-list.component.html',
   styleUrls: ['./ticket-list.component.scss']
 })

@@ -1,5 +1,5 @@
 <div class="container">
-  <div *ngIf="loading">Loading...</div>
+  <app-loading size="lg" *ngIf="loading"></app-loading>
   <div *ngIf="error">{{ error }}</div>
 
   <!-- Button to toggle form visibility -->

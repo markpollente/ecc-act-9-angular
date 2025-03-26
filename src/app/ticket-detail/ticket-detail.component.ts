@@ -8,11 +8,14 @@ import { EmployeeService } from '@services/employee.service';
 
 import { Ticket } from '@models/ticket.model';
 import { EmployeeRef } from '@models/employeeRef.model';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-ticket-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule,
+    LoadingComponent
+  ],
   templateUrl: './ticket-detail.component.html',
   styleUrls: ['./ticket-detail.component.scss']
 })

@@ -7,11 +7,14 @@ import { RoleService } from '@services/role.service';
 import { Role } from '@models/role.model';
 import { RoleModalComponent } from 'app/role-modal/role-modal.component';
 import { PaginationComponent } from '@shared/components/pagination/pagination.component';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-role-list',
   standalone: true,
-  imports: [CommonModule, FormsModule, RoleModalComponent, PaginationComponent],
+  imports: [CommonModule, FormsModule, RoleModalComponent, PaginationComponent,
+    LoadingComponent
+  ],
   templateUrl: './role-list.component.html',
   styleUrls: ['./role-list.component.scss']
 })

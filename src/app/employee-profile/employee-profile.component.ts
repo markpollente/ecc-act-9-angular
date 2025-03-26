@@ -8,11 +8,13 @@ import { AuthService } from '@services/auth.service';
 
 import { Ticket } from '@models/ticket.model';
 import { Employee } from '@models/employee.model';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-employee-profile',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, RouterModule, FormsModule,
+    LoadingComponent],
   templateUrl: './employee-profile.component.html',
   styleUrls: ['./employee-profile.component.scss']
 })

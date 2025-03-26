@@ -4,11 +4,14 @@ import { RouterModule } from '@angular/router';
 import { TicketService } from '@services/ticket.service';
 import { AuthService } from '@services/auth.service';
 import { forkJoin, of } from 'rxjs';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule,
+    LoadingComponent
+  ],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })

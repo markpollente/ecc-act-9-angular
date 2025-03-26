@@ -22,11 +22,7 @@
           </div>
         </div>
         <div class="card-body">
-          <div *ngIf="loading.profile" class="d-flex justify-content-center">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-          </div>
+          <app-loading size="lg" *ngIf="loading.profile" text=""></app-loading>
           
           <div *ngIf="error.profile" class="alert alert-danger">
             {{ error.profile }}
@@ -124,11 +120,7 @@
         </div>
         <div class="card-body">
           <!-- Loading state -->
-          <div *ngIf="loading.filed" class="d-flex justify-content-center">
-            <div class="spinner-border text-primary" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-          </div>
+          <app-loading size="lg" *ngIf="loading.filed" text=""></app-loading>
           
           <!-- Error state -->
           <div *ngIf="error.filed" class="alert alert-danger">
@@ -183,11 +175,7 @@
         </div>
         <div class="card-body">
           <!-- Loading state -->
-          <div *ngIf="loading.assigned" class="d-flex justify-content-center">
-            <div class="spinner-border text-info" role="status">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-          </div>
+          <app-loading size="lg" *ngIf="loading.assigned" text=""></app-loading>
           
           <!-- Error state -->
           <div *ngIf="error.assigned" class="alert alert-danger">

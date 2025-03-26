@@ -9,11 +9,14 @@ import { AuthService } from '@services/auth.service';
 
 import { Employee } from '@models/employee.model';
 import { Role } from '@models/role.model';
+import { LoadingComponent } from '@shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-employee-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule,
+    LoadingComponent
+  ],
   templateUrl: './employee-detail.component.html',
   styleUrls: ['./employee-detail.component.scss']
 })
