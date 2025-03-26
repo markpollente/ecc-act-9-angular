@@ -112,11 +112,14 @@ export class TicketListComponent implements OnInit {
     this.loadEmployeeReferences();
     
     this.route.queryParams.subscribe(params => {
+      let hasQueryParams = false;
+
       if (params['status']) {
         this.filters.status = params['status'];
         if (!this.activeFilters.includes('status')) {
           this.activeFilters.push('status');
         }
+        hasQueryParams = true;
       }
   
       if (params['assignee'] === 'current') {
@@ -128,8 +131,12 @@ export class TicketListComponent implements OnInit {
           this.employeeService.getProfile().subscribe(profile => {
             if (profile) {
               this.filters.assignee = profile.firstName + ' ' + profile.lastName;
+              if (hasQueryParams) {
+                this.applyFiltersAndOptions();
+              }
             }
           });
+          hasQueryParams = true;
         }
       }
   
@@ -140,11 +147,15 @@ export class TicketListComponent implements OnInit {
         this.employeeService.getProfile().subscribe(profile => {
           if (profile) {
             this.filters.createdBy = profile.firstName + ' ' + profile.lastName;
+            if (hasQueryParams) {
+              this.applyFiltersAndOptions();
+            }
           }
         });        
+        hasQueryParams = true;
       }
   
-      if (Object.keys(params).length > 0) {
+      if (hasQueryParams && !(params['assignee'] === 'current' && params['createdBy'] === 'current')) {
         this.applyFiltersAndOptions();
       } else {
         this.applyRoleBasedFilters();
@@ -251,11 +262,7 @@ export class TicketListComponent implements OnInit {
   }
 
   applyFiltersAndOptions(): void {
-    if (this.authService.isAdmin()) {
-      this.loadTickets();
-    } else {
-      this.loadRelevantTickets();
-    }
+    this.applyRoleBasedFilters();
   
     this.showDescription = this.pendingShowDescription;
     this.selectedColumns = [...this.pendingSelectedColumns];
