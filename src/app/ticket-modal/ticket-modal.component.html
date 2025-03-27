@@ -6,46 +6,46 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <form (ngSubmit)="onSave(ticketForm)" #ticketForm="ngForm">
-          <div class="row mb-3">
-            <label for="title" class="col-sm-2 col-form-label">Title:</label>
-            <div class="col-sm-10">
-              <input type="text" id="title" name="title" [(ngModel)]="newTicket.title" class="form-control" required>
-            </div>
-            <div *ngIf="ticketForm.submitted && !ticketForm.controls['title'].valid" class="error">
+        <form (ngSubmit)="onSave(ticketForm)" #ticketForm="ngForm" class="row g-3 needs-validation" novalidate>
+          <div class="col-md-12">
+            <label for="title" class="col-sm-2 col-form-label">Title</label>
+            <input type="text" id="title" name="title" #titleInput="ngModel" [(ngModel)]="newTicket.title"
+              class="form-control"
+              [class.is-invalid]="titleInput.invalid && (titleInput.touched || ticketForm.submitted)" required>
+            <div class="invalid-feedback" *ngIf="titleInput.invalid && (titleInput.touched || ticketForm.submitted)">
               Title is required
             </div>
           </div>
-          <div class="row mb-3">
-            <label for="body" class="col-sm-2 col-form-label">Body:</label>
-            <div class="col-sm-10">
-              <textarea id="body" name="body" [(ngModel)]="newTicket.body" class="form-control" required></textarea>
-            </div>
-            <div *ngIf="ticketForm.submitted && !ticketForm.controls['body'].valid" class="error">
+          <div class="col-md-12">
+            <label for="body" class="col-sm-2 col-form-label">Body</label>
+            <textarea id="body" name="body" #bodyInput="ngModel" [(ngModel)]="newTicket.body" class="form-control"
+              [class.is-invalid]="bodyInput.invalid && (bodyInput.touched || ticketForm.submitted)" required></textarea>
+            <div class="invalid-feedback" *ngIf="bodyInput.invalid && (bodyInput.touched || ticketForm.submitted)">
               Body is required
             </div>
           </div>
-          <div class="row mb-3">
-            <label for="status" class="col-sm-2 col-form-label">Status:</label>
-            <div class="col-sm-10">
-              <select id="status" name="status" [(ngModel)]="newTicket.status" class="form-select" required>
-                <option *ngFor="let status of ticketStatuses" [value]="status">{{ status }}</option>
-              </select>
-            </div>
-            <div *ngIf="ticketForm.submitted && !ticketForm.controls['status'].valid" class="error">
+
+          <div class="col-md-12">
+            <label for="status" class="col-sm-2 col-form-label">Status</label>
+            <select id="status" name="status" #statusInput="ngModel" [(ngModel)]="newTicket.status" class="form-select"
+              [class.is-invalid]="statusInput.invalid && (statusInput.touched || ticketForm.submitted)" required>
+              <option *ngFor="let status of ticketStatuses" [value]="status">{{ status }}</option>
+            </select>
+            <div class="invalid-feedback" *ngIf="statusInput.invalid && (statusInput.touched || ticketForm.submitted)">
               Status is required
             </div>
           </div>
-          <div class="row mb-3">
+
+          <div class="col-md-12">
             <label for="assignee" class="col-sm-2 col-form-label">Assignee:</label>
-            <div class="col-sm-10">
               <select id="assignee" name="assignee" [(ngModel)]="selectedEmployeeId" class="form-select">
                 <option [ngValue]="undefined">Unassigned</option>
-                <option *ngFor="let employee of employees" [ngValue]="employee.id">{{ employee.firstName }} {{ employee.lastName }}</option>
+                <option *ngFor="let employee of employees" [ngValue]="employee.id">{{ employee.firstName }} {{
+                  employee.lastName }}</option>
               </select>
-            </div>
           </div>
-          <button type="submit" class="btn btn-primary" [attr.data-bs-dismiss]="ticketForm.valid ? 'modal' : null">{{ isEditing ? 'Update Ticket' : 'Create Ticket' }}</button>
+          <button type="submit" class="btn btn-primary" [attr.data-bs-dismiss]="ticketForm.valid ? 'modal' : null">{{
+            isEditing ? 'Update Ticket' : 'Create Ticket' }}</button>
         </form>
       </div>
     </div>
